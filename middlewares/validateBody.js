@@ -5,7 +5,7 @@ const validateBody = (schema, isFavorite = false) => {
     const func = (req, res, next) => {
         if (!isEmptyObj(req.body)) {
             const { error } = schema.validate(req.body);
-            if (!!error) {
+            if (error) {
                 next(
                     HttpError(
                         400,
