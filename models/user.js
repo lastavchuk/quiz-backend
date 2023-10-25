@@ -28,7 +28,7 @@ const userSchemaMongoose = new Schema(
             minlength: [3, errMsg.errMsgMinPass],
             required: [true, errMsg.errFieldIsrequired("Password")],
         },
-        avatarURL: {
+        userAvatar: {
             type: String,
             required: [true, errMsg.errFieldIsrequired("Avatar image")],
         },
