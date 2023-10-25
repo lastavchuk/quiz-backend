@@ -7,8 +7,8 @@ const userSchemaMongoose = new Schema(
     {
         name: {
             type: String,
-            minlength: [3, errMsg.errMsgMin],
-            maxlength: [50, errMsg.errMsgMax],
+            minlength: [3, errMsg.errFieldMin("Name", 3)],
+            maxlength: [50, errMsg.errFieldMax("Name", 50)],
             required: [true, errMsg.errFieldIsrequired("Name")],
         },
         email: {
