@@ -5,6 +5,7 @@ require("dotenv").config();
 
 const authRouter = require("./routes/api/auth");
 const categoriesRouter = require("./routes/api/categories");
+const quizzesRouter = require("./routes/api/quizzes");
 const feedbackRouter = require("./routes/api/feedback");
 
 const app = express();
@@ -17,6 +18,7 @@ app.use(express.json());
 
 app.use("/api/auth", authRouter);
 app.use("/api/categories", categoriesRouter);
+app.use("/api/quizzes", quizzesRouter);
 app.use("/api/feedback", feedbackRouter);
 
 app.use((req, res) => {

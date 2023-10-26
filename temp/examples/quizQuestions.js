@@ -1,5 +1,5 @@
 const answerSchema = new Schema({
-    name: {
+    answer: {
         type: String,
         minlength: 3,
         maxlength: 500,
@@ -14,8 +14,8 @@ const answerSchema = new Schema({
 const questionSchema = new Schema({
     questionType: {
         type: String,
-        enum: ["Quiz", "True or false"],
-        default: "Quiz",
+        enum: ["quiz", "true or false"],
+        default: "quiz",
         required: true,
     },
     questionDescr: {
