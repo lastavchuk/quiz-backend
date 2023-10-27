@@ -12,7 +12,8 @@ const quizSchemaMongoose = new Schema(
         },
         rate: {
             type: Number,
-            // required: [true, errMsg.errFieldIsrequired("Rate")],
+            default: 0,
+            required: [true, errMsg.errFieldIsrequired("Rate")],
         },
         totalPassed: {
             type: Number,
@@ -26,7 +27,7 @@ const quizSchemaMongoose = new Schema(
         },
         quizCategory: {
             type: Schema.Types.ObjectId,
-            ref: "categories",
+            ref: "category",
             required: [true, errMsg.errFieldIsrequired("Quiz category")],
         },
         quizType: {
