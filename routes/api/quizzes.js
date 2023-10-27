@@ -22,7 +22,11 @@ router.post("/", authenticate, ctrl.addQuiz);
 // );
 
 // router.get("/current", authenticate, ctrl.current);
-
+// router.get("/", authenticate, ctrl.getQuiz);
+router.get("/myquiz", authenticate, ctrl.getAllQuizCreateUser);
+router.patch("/:id", authenticate, ctrl.getOnePassed); // ???????
+router.get("/:id", authenticate, ctrl.getOneQuiz);
+router.get("/", authenticate, ctrl.getSearchQuiz);
 // router.post("/logout", authenticate, ctrl.logout);
 
 // router.patch(
