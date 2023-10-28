@@ -3,21 +3,22 @@ const errMsg = require("../constants/errors");
 const handleSaveError = require("../helpers/handleSaveError");
 
 const categorySchemaMongoose = new Schema(
-    {
-        categoryName: {
-            type: String,
-            minlength: [3, errMsg.errFieldMinLength("Category name", 3)],
-            maxlength: [50, errMsg.errFieldMaxLength("Category name", 50)],
-            required: [true, errMsg.errFieldIsrequired("Category name")],
-        },
-        categoryType: {
-            type: String,
-            enum: ["adults", "children"],
-            required: [true, errMsg.errFieldIsrequired("Category type")],
-            default: "adults",
-        },
+  {
+    categoryName: {
+      type: String,
+      minlength: [3, errMsg.errFieldMinLength("Category name", 3)],
+      maxlength: [50, errMsg.errFieldMaxLength("Category name", 50)],
+      required: [true, errMsg.errFieldIsrequired("Category name")],
     },
-    { versionKey: false, timestamps: true }
+    categoryType: {
+      type: String,
+      enum: ["adults", "children"],
+      required: [true, errMsg.errFieldIsrequired("Category type")],
+      default: "adults",
+    },
+  },
+
+  { versionKey: false, timestamps: true }
 );
 
 // for error add
