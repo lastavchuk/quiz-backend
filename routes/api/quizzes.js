@@ -2,16 +2,28 @@ const express = require("express");
 const router = express.Router();
 
 const ctrl = require("../../controllers/quizzes");
-const schemas = require("../../schemas/auth");
-const { validateBody, authenticate, upload } = require("../../middlewares");
+const schemas = require("../../schemas/quizzes");
+const {
+  validateBody,
+  authenticate,
+  isValidQuizId,
+  upload,
+} = require("../../middlewares");
 
-router.post("/", authenticate, ctrl.addQuiz);
+router.post(
+  "/",
+  authenticate,
+  // validateBody(schemas.quizSchemaJoi),
+  ctrl.addQuiz
+);
 
-// router.post(
-//     "/register",
-//     validateBody(schemas.registerSchemaJoi),
-//     ctrl.register
-// );
+router.put(
+  "/:quizId",
+  authenticate,
+  isValidQuizId,
+  // validateBody(schemas.quizSchemaJoi),
+  ctrl.updateQuiz
+);
 
 // router.get("/verify/:verificationToken", ctrl.verifyEmail);
 
@@ -35,5 +47,7 @@ router.get("/", authenticate, ctrl.getSearchQuiz);
 //     upload.single("avatar"),
 //     ctrl.updateAvatar
 // );
+//  TESTING ROUTES
+router.get("/random", ctrl.getRandomQuizzes);
 
 module.exports = router;

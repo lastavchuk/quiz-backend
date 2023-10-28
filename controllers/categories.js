@@ -2,30 +2,35 @@ const Category = require("../models/category");
 const ctrlWrapper = require("../helpers/ctrlWrapper");
 
 const getCategories = async (req, res) => {
-    const categoriesAdults = await Category.find(
-        { categoryType: "adults" },
-        { _id: true, categoryName: true }
-    );
+    const { audience } = req.query;
 
-    categoriesAdults.sort((a, b) => {
-        return a.categoryName.localeCompare(b.categoryName);
-    });
+    let resCategories;
 
-    const categoriesChildren = await Category.find(
-        { categoryType: "children" },
-        { _id: true, categoryName: true }
-    );
+    if (audience === undefined) {
+        const categoriesAdults = await findAndSort("adults");
+        const categoriesChildren = await findAndSort("children");
+        resCategories = { categoriesAdults, categoriesChildren };
+    } else {
+        resCategories = await findAndSort(audience);
+    }
 
-    categoriesChildren.sort((a, b) => {
-        return a.categoryName.localeCompare(b.categoryName);
-    });
-
-    res.status(200).json({ categoriesAdults, categoriesChildren });
+    res.status(200).json(resCategories);
 };
 
 const addCategory = async (req, res) => {
     const result = await Category.create({ ...req.body });
     res.status(201).json(result);
+};
+
+const findAndSort = async (audience) => {
+    const result = await Category.find(
+        { categoryType: audience },
+        { _id: true, categoryName: true }
+    );
+
+    return result.sort((a, b) => {
+        return a.categoryName.localeCompare(b.categoryName);
+    });
 };
 
 module.exports = {
