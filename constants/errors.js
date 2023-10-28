@@ -18,12 +18,20 @@ function errFieldIsrequired(field) {
     return `${field} is required!`;
 }
 
-function errFieldMin(field, min) {
+function errFieldMinLength(field, min) {
     return `${field} must have a minimum of ${min} characters!`;
 }
 
-function errFieldMax(field, max) {
+function errFieldMaxLength(field, max) {
     return `${field} must have a maximum of ${max} characters!`;
+}
+
+function errFieldMin(field, min) {
+    return `${field} must be at least ${min}!`;
+}
+
+function errFieldMax(field, max) {
+    return `${field} should be no more than ${max}!`;
 }
 
 const errMsgEmailNotVerify = "Your email address has not been verified";
@@ -37,6 +45,8 @@ module.exports = {
     errConflict,
     errFieldMin,
     errFieldMax,
+    errFieldMinLength,
+    errFieldMaxLength,
     errMsgEmailRegexp,
     errMsgPhoneRegexp,
     errMsgMinPass,

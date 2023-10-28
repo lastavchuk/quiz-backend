@@ -6,14 +6,16 @@ const quizSchemaMongoose = new Schema(
     {
         quizName: {
             type: String,
-            minlength: [3, errMsg.errFieldMin("Quiz name", 3)],
-            maxlength: [50, errMsg.errFieldMax("Quiz name", 50)],
+            minlength: [3, errMsg.errFieldMinLength("Quiz name", 3)],
+            maxlength: [50, errMsg.errFieldMaxLength("Quiz name", 50)],
             required: [true, errMsg.errFieldIsrequired("Quiz name")],
         },
         rate: {
             type: Number,
             default: 0,
-            required: [true, errMsg.errFieldIsrequired("Rate")],
+            min: [0, errMsg.errFieldMin("Quiz rate", 0)],
+            max: [5, errMsg.errFieldMax("Quiz rate", 5)],
+            required: [true, errMsg.errFieldIsrequired("Quiz rate")],
         },
         totalPassed: {
             type: Number,
