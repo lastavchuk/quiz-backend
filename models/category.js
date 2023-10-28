@@ -6,8 +6,8 @@ const categorySchemaMongoose = new Schema(
     {
         categoryName: {
             type: String,
-            minlength: [3, errMsg.errFieldMin("Category name", 3)],
-            maxlength: [50, errMsg.errFieldMax("Category name", 50)],
+            minlength: [3, errMsg.errFieldMinLength("Category name", 3)],
+            maxlength: [50, errMsg.errFieldMaxLength("Category name", 50)],
             required: [true, errMsg.errFieldIsrequired("Category name")],
         },
         categoryType: {
