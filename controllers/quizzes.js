@@ -81,22 +81,30 @@ const getOneQuiz = async (req, res) => {
   const result = await Quiz.findOne({ _id: id }).populate("quizCategory");
   res.json(result);
 };
-
+// *****************************************
 const getSearchQuiz = async (req, res) => {
-  const { page = 1, limit = 6, q, type, category } = req.query;
+  const { page = 1, limit = 6, q, type, rates, category } = req.query;
 
   const skip = (page - 1) * limit;
   const options = { skip, limit };
-  const catId = await Category.find({ categoryName: category });
-  const oneCategory = catId.map((itm) => itm._id);
+  const qq = new RegExp(q, "i");
+
+  const catId = await Category.find({ categoryName: category }); // видалити 2 строки якщо пошук по id
+  const oneCategory = catId.map((itm) => itm._id); // ------
   const result = await Quiz.find(
     {
-      $or: [{ quizName: q }, { quizType: type }, { quizCategory: oneCategory }],
+      $or: [
+        // { quizName: { $regex: q, $options: "i" } },
+        { quizName: qq },
+        { quizType: type },
+        { rate: rates },
+        { quizCategory: oneCategory }, // замінити при пошуку по id на category
+      ],
     },
     "",
     options
   )
-    .sort()
+
     .populate("quizCategory")
     .populate("owner", "_id name ");
 
