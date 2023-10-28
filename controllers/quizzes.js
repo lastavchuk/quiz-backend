@@ -38,10 +38,30 @@ const addQuiz = async (req, res) => {
 //  ? флаг чи знаходиться тест в обраних;
 
 const getQuiz = async (req, res) => {
-    res.json({ msg: "OK" });
+    const result = await Quiz.find({});
+    res.status(201).json(result);
+    //res.json({ msg: "OK" });
+};
+
+const getRandomQuizzes = async (req, res) => {
+    const { quizType, page = 1, limit = 8, sortby } = req.query;
+    const skip = (page - 1) * limit;
+    const options = { skip, limit };
+    let filter = {};
+    if (quizType !== undefined) {
+        filter = { quizType };
+    }
+    let result = {};
+    if (sortby === 'data') {
+        result = await Quiz.find(filter, "", options).sort('-createdAt');
+    } else {
+        result = await Quiz.aggregate([{ $match: filter }, { $sample: { size: Number(limit) } }]);
+    }
+    res.status(201).json(result);
 };
 
 module.exports = {
     addQuiz: ctrlWrapper(addQuiz),
     getQuiz: ctrlWrapper(getQuiz),
+    getRandomQuizzes: ctrlWrapper(getRandomQuizzes),
 };
