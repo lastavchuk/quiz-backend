@@ -7,6 +7,12 @@ const { validateBody, authenticate, upload } = require("../../middlewares");
 
 router.post("/", authenticate, ctrl.addQuiz);
 
+
+//TESTING ROUTES
+router.get("/random", ctrl.getRandomQuizzes);
+
+
+
 // router.post(
 //     "/register",
 //     validateBody(schemas.registerSchemaJoi),
