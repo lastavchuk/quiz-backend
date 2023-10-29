@@ -102,6 +102,17 @@ const updateQuiz = async (req, res) => {
     // }
 };
 
+const daleteQuiz = async (req, res) => {
+    const result = await Quiz.findByIdAndRemove(req.params.quizId);
+    if (!result) {
+        throw HttpError(404, errMsg.errMsgQuizNotFound);
+    }
+
+    await Question.deleteMany({ quizId: req.params.quizId });
+
+    res.json({ message: "Quiz deleted!" });
+};
+
 // **************************************
 const getAllQuizCreateUser = async (req, res) => {
     // додати фаворіти та
@@ -210,4 +221,5 @@ module.exports = {
     getSearchQuiz: ctrlWrapper(getSearchQuiz),
     updateQuiz: ctrlWrapper(updateQuiz),
     getRandomQuizzes: ctrlWrapper(getRandomQuizzes),
+    daleteQuiz: ctrlWrapper(daleteQuiz),
 };
