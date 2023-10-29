@@ -28,8 +28,8 @@ router.put(
 router.delete("/:quizId", authenticate, isValidQuizId, ctrl.daleteQuiz);
 
 router.get("/myquiz", authenticate, ctrl.getAllQuizCreateUser);
-router.patch("/:id", authenticate, ctrl.getOnePassed); // ???????
-router.get("/:id", authenticate, ctrl.getOneQuiz);
+router.patch("/:quizId", authenticate, isValidQuizId, ctrl.getOnePassed); // ???????
+router.get("/:quizId", authenticate, isValidQuizId, ctrl.getOneQuiz);
 router.get("/", authenticate, ctrl.getSearchQuiz);
 
 //  TESTING ROUTES

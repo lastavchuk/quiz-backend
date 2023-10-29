@@ -126,7 +126,7 @@ const getAllQuizCreateUser = async (req, res) => {
 };
 // *****************************
 const getOnePassed = async (req, res) => {
-    const quizId = req.params.id;
+    const quizId = req.params.quizId;
     const result = await Quiz.findOneAndUpdate(
         {
             _id: quizId,
@@ -143,7 +143,7 @@ const getOnePassed = async (req, res) => {
 // ****************************************
 
 const getOneQuiz = async (req, res) => {
-    const { id } = req.params;
+    const id = req.params.quizId;
     const result = await Quiz.findOne({ _id: id }).populate("quizCategory");
     res.json(result);
 };
@@ -170,7 +170,7 @@ const getSearchQuiz = async (req, res) => {
     const result = await Quiz.find(filter, "", { skip, limit });
 
     // const options = { skip, limit };
-    // const qq = new RegExp(q, "i");
+    // const qq = new RegExp("^"+q, "i");
 
     // const catId = await Category.find({ categoryName: category }); // видалити 2 строки якщо пошук по id
     // const oneCategory = catId.map((itm) => itm._id); // ------
