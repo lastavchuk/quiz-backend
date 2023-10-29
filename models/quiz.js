@@ -1,5 +1,6 @@
 const { Schema, model } = require("mongoose");
 const errMsg = require("../constants/errors");
+const conctants = require("../constants/constants");
 const handleSaveError = require("../helpers/handleSaveError");
 
 const quizSchemaMongoose = new Schema(
@@ -34,8 +35,8 @@ const quizSchemaMongoose = new Schema(
         },
         quizType: {
             type: String,
-            enum: ["adults", "children"],
-            default: "adults",
+            enum: conctants.audienceArr,
+            default: conctants.audienceArr[0],
             required: [true, errMsg.errFieldIsrequired("Quiz type")],
         },
     },

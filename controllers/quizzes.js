@@ -1,5 +1,4 @@
 const Quiz = require("../models/quiz");
-const Category = require("../models/category");
 const Question = require("../models/question");
 const { ctrlWrapper, HttpError } = require("../helpers");
 const errMsg = require("../constants/errors");
@@ -52,71 +51,68 @@ const updateQuiz = async (req, res) => {
     const resQuiz = await Quiz.findByIdAndUpdate(req.params.quizId, quiz, {
         new: true,
     });
-
-    // const result2 = await Person.updateMany({ name: /Stark$/ }, { isDeleted: true });
-    // result2.n; // Number of documents matched
-    // result2.nModified; // Number of documents modified
-    // res.matchedCount; // Number of documents matched
-    // res.modifiedCount; // Number of documents modified
-    // res.acknowledged; // Boolean indicating everything went smoothly.
-    // res.upsertedId; // null or an id containing a document that had to be upserted.
-    // res.upsertedCount; // Number indicating how many documents had to be upserted. Will either be 0 or 1.
     if (!resQuiz) {
         throw HttpError(404);
     }
 
-    // questions.forEach((el) => {
+    try {
+        await Question.deleteMany({ quizId: req.params.quizId });
+        const resAddQuestions = await Question.insertMany(questions);
+
+        const newQuiz = {
+            _id: resQuiz._id,
+            owner: resQuiz.owner,
+            quizCategory: resQuiz.quizCategory,
+            quizType: resQuiz.quizType,
+            quizName: resQuiz.quizName,
+            rate: resQuiz.rate,
+            totalPassed: resQuiz.totalPassed,
+            questions: resAddQuestions,
+        };
+        res.json(newQuiz);
+    } catch (error) {
+        res.status(400).json({ message: "Failed to update quiz questions!" });
+    }
+
+    // // Цей метод не враховує випадок, коли зменшиться кількість запитань у вікторині
+    // // Якщо спочатку було 4, а після оновлення стане 2, то в базі не видаляться 2 зайві запитання
+    // const listOfPromises = questions.map((el) => {
     //     const id = el._id;
     //     delete el._id;
-    //     // console.log("el :>> ", el);
-    //     Question.findByIdAndUpdate(id, el, { new: true });
+    //     return Question.findByIdAndUpdate(id, el, { new: true });
     // });
 
-    const id = questions[2]._id;
-    console.log("id :>> ", id);
-    delete questions[2]._id;
-    console.log("questions[2] :>> ", questions[2]);
-    await Question.findByIdAndUpdate(id, questions[2], { new: true });
+    // try {
+    //     const resQuestions = await Promise.all(listOfPromises);
+    //     const newQuiz = {
+    //         _id: resQuiz._id,
+    //         owner: resQuiz.owner,
+    //         quizCategory: resQuiz.quizCategory,
+    //         quizType: resQuiz.quizType,
+    //         quizName: resQuiz.quizName,
+    //         rate: resQuiz.rate,
+    //         totalPassed: resQuiz.totalPassed,
+    //         questions: resQuestions,
+    //     };
 
-    // const options = {
-    //     // upsert: true, // якщо документа немає, то створити його
-    //     isDeleted: true, //
-    // };
-    // const resQuestions = await Question.updateMany(
-    //     // { _id: { $in: usersId } }, { $set: req.body }
-    //     { quizId: { $in: resQuiz._id } },
-    //     questions,
-    //     options
-    // );
-
-    // const newQuiz = {
-    //     _id: resQuiz._id,
-    //     owner: resQuiz.owner,
-    //     quizCategory: resQuiz.quizCategory,
-    //     quizType: resQuiz.quizType,
-    //     quizName: resQuiz.quizName,
-    //     rate: resQuiz.rate,
-    //     totalPassed: resQuiz.totalPassed,
-    //     questions: resQuestions,
-    // };
-
-    // console.log("newQuiz :>> ", newQuiz);
-
-    // res.json(newQuiz);
-    res.json("ok");
+    //     res.json(newQuiz);
+    // } catch (err) {
+    //     console.log("err :>> ", err);
+    //     res.status(400).json({ message: "Failed to update quiz questions!" });
+    // }
 };
-// Це треба додати у відповідь
-//  ? флаг чи знаходиться тест в обраних;
 
-// const getQuiz = async (req, res) => {
-//   // const {user}=req.user
-//   const result = await Quiz.find();
-//   console.log(result);
-//   res.json({
-//     quizName: result.name,
-//     totalPassed: result.totalPassed,
-//   });
-// };
+const daleteQuiz = async (req, res) => {
+    const result = await Quiz.findByIdAndRemove(req.params.quizId);
+    if (!result) {
+        throw HttpError(404, errMsg.errMsgQuizNotFound);
+    }
+
+    await Question.deleteMany({ quizId: req.params.quizId });
+
+    res.json({ message: "Quiz deleted!" });
+};
+
 // **************************************
 const getAllQuizCreateUser = async (req, res) => {
     // додати фаворіти та
@@ -219,11 +215,11 @@ const getRandomQuizzes = async (req, res) => {
 
 module.exports = {
     addQuiz: ctrlWrapper(addQuiz),
-    // getQuiz: ctrlWrapper(getQuiz),
     getAllQuizCreateUser: ctrlWrapper(getAllQuizCreateUser),
     getOnePassed: ctrlWrapper(getOnePassed),
     getOneQuiz: ctrlWrapper(getOneQuiz),
     getSearchQuiz: ctrlWrapper(getSearchQuiz),
     updateQuiz: ctrlWrapper(updateQuiz),
     getRandomQuizzes: ctrlWrapper(getRandomQuizzes),
+    daleteQuiz: ctrlWrapper(daleteQuiz),
 };

@@ -1,5 +1,6 @@
 const { Schema, model } = require("mongoose");
 const errMsg = require("../constants/errors");
+const constants = require("../constants/constants");
 const handleSaveError = require("../helpers/handleSaveError");
 
 const answerSchemaMongoose = new Schema(
@@ -23,8 +24,8 @@ const questionSchemaMongoose = new Schema(
     {
         type: {
             type: String,
-            enum: ["quiz", "true or false"],
-            default: "quiz",
+            enum: constants.questionType,
+            default: constants.questionType[0],
             required: [true, errMsg.errFieldIsrequired("Question type")],
         },
         time: {
@@ -36,13 +37,8 @@ const questionSchemaMongoose = new Schema(
         },
         background: {
             type: String,
-            default: "rgba(255, 255, 255, 0.02)",
-            enum: [
-                "rgba(255, 255, 255, 0.02)",
-                "#43A8D3",
-                "#6636C5",
-                "#E65368",
-            ],
+            enum: constants.questionBg,
+            default: constants.questionBg[0],
             required: [true, errMsg.errFieldIsrequired("Answer background")],
         },
         question: {
@@ -58,7 +54,7 @@ const questionSchemaMongoose = new Schema(
         quizId: {
             type: Schema.Types.ObjectId,
             ref: "quiz",
-            required: [true, errMsg.errFieldIsrequired("quizId")],
+            required: [true, errMsg.errFieldIsrequired("Quiz id2")],
         },
     },
     { versionKey: false }

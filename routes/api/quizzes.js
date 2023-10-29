@@ -13,7 +13,7 @@ const {
 router.post(
     "/",
     authenticate,
-    // validateBody(schemas.quizSchemaJoi),
+    validateBody(schemas.addQuizSchemaJoi),
     ctrl.addQuiz
 );
 
@@ -21,9 +21,11 @@ router.put(
     "/:quizId",
     authenticate,
     isValidQuizId,
-    // validateBody(schemas.quizSchemaJoi),
+    validateBody(schemas.updateQuizSchemaJoi),
     ctrl.updateQuiz
 );
+
+router.delete("/:quizId", authenticate, isValidQuizId, ctrl.daleteQuiz);
 
 router.get("/myquiz", authenticate, ctrl.getAllQuizCreateUser);
 router.patch("/:id", authenticate, ctrl.getOnePassed); // ???????
