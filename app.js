@@ -7,6 +7,7 @@ const authRouter = require("./routes/api/auth");
 const categoriesRouter = require("./routes/api/categories");
 const quizzesRouter = require("./routes/api/quizzes");
 const feedbackRouter = require("./routes/api/feedback");
+const usersRouter = require("./routes/api/users");
 
 const app = express();
 
@@ -20,13 +21,14 @@ app.use("/api/auth", authRouter);
 app.use("/api/categories", categoriesRouter);
 app.use("/api/quizzes", quizzesRouter);
 app.use("/api/feedback", feedbackRouter);
+app.use("/api/users", usersRouter);
 
 app.use((req, res) => {
-    res.status(404).json({ message: "Route not found" });
+  res.status(404).json({ message: "Route not found" });
 });
 
 app.use(({ status = 500, message = "Server error" }, req, res, next) => {
-    res.status(status).json({ message });
+  res.status(status).json({ message });
 });
 
 module.exports = app;

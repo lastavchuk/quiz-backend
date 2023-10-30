@@ -5,16 +5,16 @@ const schemas = require("../../schemas/feedback");
 const { validateBody, authenticate } = require("../../middlewares");
 
 router.post(
-    "/",
-    authenticate,
-    validateBody(schemas.feedbackSchemaJoi),
-    ctrl.addFeedback
+  "/",
+  authenticate,
+  validateBody(schemas.feedbackSchemaJoi),
+  ctrl.addFeedback
 ); //роут для авторизованих для відгуку про додаток
 
 router.post(
-    "/:quizId",
-    validateBody(schemas.feedbackSchemaJoi),
-    ctrl.addFeedback
+  "/:quizId",
+  validateBody(schemas.feedbackSchemaJoi),
+  ctrl.addFeedback
 ); //роут для всіх
 
 router.get("/", ctrl.getAllFeedbacks);
