@@ -1,5 +1,6 @@
 const Joi = require("joi");
 const errMsg = require("../constants/errors");
+const conctants = require("../constants/constants");
 
 const categorySchemaJoi = Joi.object({
     categoryName: Joi.string()
@@ -7,13 +8,13 @@ const categorySchemaJoi = Joi.object({
         .max(50)
         .required()
         .messages({
-            "string.min": errMsg.errFieldMin("Category name", 3),
-            "string.max": errMsg.errFieldMax("Category name", 50),
+            "string.min": errMsg.errFieldMinLength("Category name", 3),
+            "string.max": errMsg.errFieldMaxLength("Category name", 50),
             "string.empty": errMsg.errFieldIsrequired("Category name"),
             "any.required": errMsg.errFieldIsrequired("Category name"),
         }),
     categoryType: Joi.string()
-        .valid("adults", "children")
+        .valid(...conctants.audienceArr)
         .required()
         .messages({
             "any.required": errMsg.errFieldIsrequired("Category type"),

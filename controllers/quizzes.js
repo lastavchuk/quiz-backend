@@ -202,7 +202,7 @@ const getRandomQuizzes = async (req, res) => {
         filter = { quizType };
     }
     let result = {};
-    if (sortby === "data") {
+    if (sortby === "date") {
         result = await Quiz.find(filter, "", options).sort("-createdAt");
     } else {
         result = await Quiz.aggregate([

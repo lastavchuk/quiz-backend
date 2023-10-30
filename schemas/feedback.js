@@ -8,16 +8,19 @@ const feedbackSchemaJoi = Joi.object({
         .max(50)
         .required()
         .messages({
-            "string.min": errMsg.errFieldMin('User Name', 3),
-            "string.msx": errMsg.errFieldMax('User Name', 50),
-            "string.empty": errMsg.errFieldIsrequired("User Name"),
-            "any.required": errMsg.errFieldIsrequired("User Name"),
+            "string.min": errMsg.errFieldMinLength("User name", 3),
+            "string.max": errMsg.errFieldMaxLength("User name", 50),
+            "string.empty": errMsg.errFieldIsrequired("User name"),
+            "any.required": errMsg.errFieldIsrequired("User name"),
         }),
     userAvatar: Joi.string(),
     rate: Joi.number()
+        .min(0)
+        .max(5)
         .required()
         .messages({
-            "string.empty": errMsg.errFieldIsrequired("Vote"),
+            "number.min": errMsg.errFieldMin("Vote", 0),
+            "number.max": errMsg.errFieldMax("Vote", 5),
             "any.required": errMsg.errFieldIsrequired("Vote"),
         }),
     comment: Joi.string()
@@ -25,8 +28,8 @@ const feedbackSchemaJoi = Joi.object({
         .max(500)
         .required()
         .messages({
-            "string.min": errMsg.errFieldMin('Comment', 8),
-            "string.msx": errMsg.errFieldMax('Comment', 500),
+            "string.min": errMsg.errFieldMinLength("Comment", 8),
+            "string.max": errMsg.errFieldMaxLength("Comment", 500),
             "string.empty": errMsg.errFieldIsrequired("Comment"),
             "any.required": errMsg.errFieldIsrequired("Comment"),
         }),
