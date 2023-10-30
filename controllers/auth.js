@@ -2,7 +2,9 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const path = require("path");
 const fs = require("fs/promises");
+const gravatar = require("gravatar");
 const jimp = require("jimp");
+
 const randomId = require("crypto").randomUUID;
 
 const User = require("../models/user");
@@ -14,6 +16,7 @@ const { SECRET_KEY } = process.env;
 
 const register = async (req, res) => {
   const hashPass = await bcrypt.hash(req.body.password, 10);
+<<<<<<< Updated upstream
   const userAvatar =
     "https://gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50";
 
@@ -33,6 +36,30 @@ const register = async (req, res) => {
       name: result.name,
       email: result.email,
     },
+=======
+
+  const userAvatar = gravatar.url(req.body.email, {
+    protocol: "https",
+    s: "100",
+  });
+
+  // "https://gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50";
+
+  const verificationToken = randomId();
+
+  const result = await User.create({
+    ...req.body,
+    password: hashPass,
+    userAvatar,
+    verificationToken,
+  });
+
+  await sendEmail(verifyEmailTmpl(result.email, verificationToken));
+
+  res.status(201).json({
+    name: result.name,
+    email: result.email,
+>>>>>>> Stashed changes
   });
 };
 
@@ -80,6 +107,7 @@ const logout = async (req, res) => {
   res.status(204).json();
 };
 
+/* update this func */
 const updateAvatar = async (req, res) => {
   await jimp
     .read(req.file.path)
@@ -91,6 +119,7 @@ const updateAvatar = async (req, res) => {
     });
 
   const newFileName = `${req.user._id}_${req.file.originalname}`;
+<<<<<<< Updated upstream
   /// ===================================
   const avatarPath = path.join(
     __dirname,
@@ -105,6 +134,24 @@ const updateAvatar = async (req, res) => {
   const userAvatar = path.join("avatars", newFileName);
   await User.findByIdAndUpdate(req.user._id, { userAvatar });
 
+=======
+
+  // ===================================
+
+  const avatarPath = path.join(
+    __dirname,
+    "../",
+    "public",
+    "avatars",
+    newFileName
+  );
+
+  await fs.rename(req.file.path, avatarPath);
+
+  const userAvatar = path.join("avatars", newFileName);
+  await User.findByIdAndUpdate(req.user._id, { userAvatar });
+
+>>>>>>> Stashed changes
   res.json({ userAvatar });
 };
 

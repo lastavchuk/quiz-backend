@@ -3,6 +3,7 @@ const errMsg = require("../constants/errors");
 const conctants = require("../constants/constants");
 const schemasQuestion = require("./questions");
 
+<<<<<<< Updated upstream
 const addQuizObj = {
     quizCategory: Joi.string()
         .required()
@@ -72,6 +73,28 @@ const updateQuizSchemaJoi = Joi.object(updateQuizObj);
 const schemas = {
     addQuizSchemaJoi,
     updateQuizSchemaJoi,
+=======
+const quizSchemaJoi = Joi.object({
+  quizName: Joi.string()
+    .min(3)
+    .max(50)
+    .required()
+    .messages({
+      "string.min": errMsg.errFieldMin("Quiz name", 3),
+      "string.max": errMsg.errFieldMax("Quiz name", 50),
+      "string.empty": errMsg.errFieldIsrequired("Quiz name"),
+      "any.required": errMsg.errFieldIsrequired("Quiz name"),
+    }),
+});
+
+const updateFavoriteSchema = Joi.object({
+  quizId: Joi.string().required(),
+});
+
+const schemas = {
+  quizSchemaJoi,
+  updateFavoriteSchema,
+>>>>>>> Stashed changes
 };
 
 module.exports = schemas;
