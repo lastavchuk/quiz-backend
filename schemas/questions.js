@@ -8,8 +8,8 @@ const answerSchemaJoi = Joi.object({
         .max(500)
         .required()
         .messages({
-            "string.min": errMsg.errFieldMin("Answer", 3),
-            "string.max": errMsg.errFieldMax("Answer", 500),
+            "string.min": errMsg.errFieldMinLength("Answer", 3),
+            "string.max": errMsg.errFieldMaxLength("Answer", 500),
             "string.empty": errMsg.errFieldIsrequired("Answer"),
             "any.required": errMsg.errFieldIsrequired("Answer"),
         }),
@@ -53,8 +53,8 @@ const addQuestionObj = {
         .max(50)
         .required()
         .messages({
-            "string.min": errMsg.errFieldMin("Question", 3),
-            "string.max": errMsg.errFieldMax("Question", 50),
+            "string.min": errMsg.errFieldMinLength("Question", 3),
+            "string.max": errMsg.errFieldMaxLength("Question", 50),
             "string.empty": errMsg.errFieldIsrequired("Question"),
             "any.required": errMsg.errFieldIsrequired("Question"),
         }),
