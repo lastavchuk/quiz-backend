@@ -16,27 +16,6 @@ const { SECRET_KEY } = process.env;
 
 const register = async (req, res) => {
   const hashPass = await bcrypt.hash(req.body.password, 10);
-<<<<<<< Updated upstream
-  const userAvatar =
-    "https://gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50";
-
-  const verificationToken = randomId();
-
-  const result = await User.create({
-    ...req.body,
-    password: hashPass,
-    userAvatar,
-    verificationToken,
-  });
-
-  await sendEmail(verifyEmailTmpl(result.email, verificationToken));
-
-  res.status(201).json({
-    user: {
-      name: result.name,
-      email: result.email,
-    },
-=======
 
   const userAvatar = gravatar.url(req.body.email, {
     protocol: "https",
@@ -59,7 +38,6 @@ const register = async (req, res) => {
   res.status(201).json({
     name: result.name,
     email: result.email,
->>>>>>> Stashed changes
   });
 };
 
@@ -119,22 +97,6 @@ const updateAvatar = async (req, res) => {
     });
 
   const newFileName = `${req.user._id}_${req.file.originalname}`;
-<<<<<<< Updated upstream
-  /// ===================================
-  const avatarPath = path.join(
-    __dirname,
-    "../",
-    "public",
-    "avatars",
-    newFileName
-  );
-
-  await fs.rename(req.file.path, avatarPath);
-
-  const userAvatar = path.join("avatars", newFileName);
-  await User.findByIdAndUpdate(req.user._id, { userAvatar });
-
-=======
 
   // ===================================
 
@@ -151,7 +113,6 @@ const updateAvatar = async (req, res) => {
   const userAvatar = path.join("avatars", newFileName);
   await User.findByIdAndUpdate(req.user._id, { userAvatar });
 
->>>>>>> Stashed changes
   res.json({ userAvatar });
 };
 

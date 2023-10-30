@@ -1,4 +1,3 @@
-<<<<<<< Updated upstream
 const express = require("express");
 const router = express.Router();
 
@@ -16,12 +15,3 @@ router.patch(
 );
 
 module.exports = router;
-=======
-// router.patch(
-//   "/:quizId/favorite",
-// authenticate,
-//   isValidQuizId,
-/* maybe it should be here helpers validateBody?? */
-//   ctrl.updateFavorite
-// );
->>>>>>> Stashed changes
