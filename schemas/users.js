@@ -1,12 +1,12 @@
-const Joi = require("joi");
-const errMsg = require("../constants/errors");
+const Joi = require('joi');
+const errMsg = require('../constants/errors');
 
 const updateFavoritesSchema = Joi.object({
   favorites: Joi.string()
     .required()
     .messages({
-      "string.empty": errMsg.errFieldIsrequired("favorites field"),
-      "any.required": errMsg.errFieldIsrequired("favorites field"),
+      'string.empty': errMsg.errFieldIsrequired('favorites field'),
+      'any.required': errMsg.errFieldIsrequired('favorites field'),
     }),
 });
 

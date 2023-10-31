@@ -1,7 +1,7 @@
-const Quiz = require("../models/quiz");
-const Question = require("../models/question");
-const { ctrlWrapper, HttpError } = require("../helpers");
-const errMsg = require("../constants/errors");
+const Quiz = require('../models/quiz');
+const Question = require('../models/question');
+const { ctrlWrapper, HttpError } = require('../helpers');
+const errMsg = require('../constants/errors');
 
 const addQuiz = async (req, res) => {
   const { quizCategory, quizType, quizName, questions } = req.body;
@@ -17,7 +17,7 @@ const addQuiz = async (req, res) => {
 
   const resQuiz = await Quiz.create(quiz);
 
-  questions.forEach((el) => (el.quizId = resQuiz._id));
+  questions.forEach(el => (el.quizId = resQuiz._id));
 
   const resQuestions = await Question.insertMany(questions);
 
@@ -71,7 +71,7 @@ const updateQuiz = async (req, res) => {
     };
     res.json(newQuiz);
   } catch (error) {
-    res.status(400).json({ message: "Failed to update quiz questions!" });
+    res.status(400).json({ message: 'Failed to update quiz questions!' });
   }
 
   // // Цей метод не враховує випадок, коли зменшиться кількість запитань у вікторині
@@ -102,7 +102,7 @@ const updateQuiz = async (req, res) => {
   // }
 };
 
-const daleteQuiz = async (req, res) => {
+const deleteQuiz = async (req, res) => {
   const result = await Quiz.findByIdAndRemove(req.params.quizId);
   if (!result) {
     throw HttpError(404, errMsg.errMsgQuizNotFound);
@@ -110,7 +110,10 @@ const daleteQuiz = async (req, res) => {
 
   await Question.deleteMany({ quizId: req.params.quizId });
 
-  res.json({ message: "Quiz deleted!" });
+  // Видалити ід тексту у всіх юзерів з обраних та пройдених !!!
+  // В кого було видалено, перерахувати середній бал
+
+  res.json({ message: 'Quiz deleted!' });
 };
 
 // **************************************
@@ -120,8 +123,8 @@ const getAllQuizCreateUser = async (req, res) => {
   const { _id } = req.user;
   const par = { owner: _id };
   const result = await Quiz.find(par)
-    .populate("quizCategory")
-    .populate("owner", "_id name ");
+    .populate('quizCategory')
+    .populate('owner', '_id name ');
   res.json(result); // змінити на фаворіти
 };
 // *****************************
@@ -135,7 +138,7 @@ const getOnePassed = async (req, res) => {
       $inc: { totalPassed: 1 },
     },
     {
-      returnDocument: "after",
+      returnDocument: 'after',
     }
   );
   res.json(result);
@@ -144,7 +147,7 @@ const getOnePassed = async (req, res) => {
 
 const getOneQuiz = async (req, res) => {
   const id = req.params.quizId;
-  const result = await Quiz.findOne({ _id: id }).populate("quizCategory");
+  const result = await Quiz.findOne({ _id: id }).populate('quizCategory');
   res.json(result);
 };
 // *****************************************
@@ -155,7 +158,7 @@ const getSearchQuiz = async (req, res) => {
 
   let filter = {};
   if (q) {
-    filter.quizName = new RegExp(q, "i");
+    filter.quizName = new RegExp(q, 'i');
   }
   if (type) {
     filter.quizType = type;
@@ -167,7 +170,7 @@ const getSearchQuiz = async (req, res) => {
   if (category) {
     filter.quizCategory = category;
   }
-  const result = await Quiz.find(filter, "", { skip, limit });
+  const result = await Quiz.find(filter, '', { skip, limit });
 
   // const options = { skip, limit };
   // const qq = new RegExp("^"+q, "i");
@@ -202,8 +205,8 @@ const getRandomQuizzes = async (req, res) => {
     filter = { quizType };
   }
   let result = {};
-  if (sortby === "date") {
-    result = await Quiz.find(filter, "", options).sort("-createdAt");
+  if (sortby === 'date') {
+    result = await Quiz.find(filter, '', options).sort('-createdAt');
   } else {
     result = await Quiz.aggregate([
       { $match: filter },
@@ -221,5 +224,5 @@ module.exports = {
   getSearchQuiz: ctrlWrapper(getSearchQuiz),
   updateQuiz: ctrlWrapper(updateQuiz),
   getRandomQuizzes: ctrlWrapper(getRandomQuizzes),
-  daleteQuiz: ctrlWrapper(daleteQuiz),
+  deleteQuiz: ctrlWrapper(deleteQuiz),
 };

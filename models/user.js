@@ -1,15 +1,15 @@
-const { Schema, model } = require("mongoose");
-const errMsg = require("../constants/errors");
-const regexp = require("../constants/regexps");
-const handleSaveError = require("../helpers/handleSaveError");
+const { Schema, model } = require('mongoose');
+const errMsg = require('../constants/errors');
+const regexp = require('../constants/regexps');
+const handleSaveError = require('../helpers/handleSaveError');
 
 const userSchemaMongoose = new Schema(
   {
     name: {
       type: String,
-      minlength: [3, errMsg.errFieldMinLength("User name", 3)],
-      maxlength: [50, errMsg.errFieldMaxLength("User name", 50)],
-      required: [true, errMsg.errFieldIsrequired("User name")],
+      minlength: [3, errMsg.errFieldMinLength('User name', 3)],
+      maxlength: [50, errMsg.errFieldMaxLength('User name', 50)],
+      required: [true, errMsg.errFieldIsrequired('User name')],
     },
     email: {
       type: String,
@@ -18,18 +18,18 @@ const userSchemaMongoose = new Schema(
         validator: function (v) {
           return regexp.emailRegexp.test(v);
         },
-        message: (props) => `${props.value} ${errMsg.errMsgEmailRegexp}`,
+        message: props => `${props.value} ${errMsg.errMsgEmailRegexp}`,
       },
-      required: [true, errMsg.errFieldIsrequired("Email")],
+      required: [true, errMsg.errFieldIsrequired('Email')],
     },
     password: {
       type: String,
       minlength: [3, errMsg.errMsgMinPass],
-      required: [true, errMsg.errFieldIsrequired("Password")],
+      required: [true, errMsg.errFieldIsrequired('Password')],
     },
     userAvatar: {
       type: String,
-      required: [true, errMsg.errFieldIsrequired("Avatar image")],
+      required: [true, errMsg.errFieldIsrequired('Avatar image')],
     },
     token: String,
     verify: {
@@ -38,7 +38,7 @@ const userSchemaMongoose = new Schema(
     },
     verificationToken: {
       type: String,
-      required: [true, errMsg.errFieldIsrequired("Verify token")],
+      required: [true, errMsg.errFieldIsrequired('Verify token')],
     },
     favorites: { type: [String], default: [] },
   },
@@ -46,8 +46,8 @@ const userSchemaMongoose = new Schema(
 );
 
 // for error add (post)
-userSchemaMongoose.post("save", handleSaveError);
+userSchemaMongoose.post('save', handleSaveError);
 
-const User = model("user", userSchemaMongoose);
+const User = model('user', userSchemaMongoose);
 
 module.exports = User;
