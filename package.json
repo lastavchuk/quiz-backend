@@ -4,6 +4,7 @@
     "private": true,
     "scripts": {
         "start": "cross-env NODE_ENV=production node ./server.js",
+        "gendoc": "node ./swagger.js",
         "dev": "cross-env NODE_ENV=development nodemon ./server.js",
         "test": "jest",
         "lint": "eslint **/*.js",
@@ -22,7 +23,9 @@
         "mongoose": "^7.6.3",
         "morgan": "^1.10.0",
         "multer": "^1.4.5-lts.1",
-        "nodemailer": "^6.9.7"
+        "nodemailer": "^6.9.7",
+        "swagger-autogen": "^2.23.7",
+        "swagger-ui-express": "^5.0.0"
     },
     "devDependencies": {
         "eslint": "^8.50.0",
