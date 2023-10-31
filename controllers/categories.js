@@ -4,14 +4,13 @@ const ctrlWrapper = require('../helpers/ctrlWrapper');
 const getCategories = async (req, res) => {
   const { audience } = req.query;
 
-  let resCategories;
+  const resCategories = {};
 
   if (audience === undefined) {
-    const categoriesAdults = await findAndSort('adults');
-    const categoriesChildren = await findAndSort('children');
-    resCategories = { categoriesAdults, categoriesChildren };
+    resCategories.adults = await findAndSort('adults');
+    resCategories.children = await findAndSort('children');
   } else {
-    resCategories = await findAndSort(audience);
+    resCategories[audience] = await findAndSort(audience);
   }
 
   res.status(200).json(resCategories);
