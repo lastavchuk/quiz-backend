@@ -110,6 +110,9 @@ const daleteQuiz = async (req, res) => {
 
     await Question.deleteMany({ quizId: req.params.quizId });
 
+    // Видалити ід тексту у всіх юзерів з обраних та пройдених !!!
+    // В кого було видалено, перерахувати середній бал
+
     res.json({ message: "Quiz deleted!" });
 };
 

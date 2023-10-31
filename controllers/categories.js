@@ -2,6 +2,8 @@ const Category = require("../models/category");
 const ctrlWrapper = require("../helpers/ctrlWrapper");
 
 const getCategories = async (req, res) => {
+    // #swagger.summary = 'Some summary...'
+    // #swagger.description = 'Get categories'
     const { audience } = req.query;
 
     let resCategories;
@@ -18,6 +20,8 @@ const getCategories = async (req, res) => {
 };
 
 const addCategory = async (req, res) => {
+    // #swagger.summary = 'Some summary...'
+    // #swagger.description = 'Add category'
     const result = await Category.create({ ...req.body });
     res.status(201).json(result);
 };
