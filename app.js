@@ -10,6 +10,7 @@ const authRouter = require('./routes/api/auth');
 const categoriesRouter = require('./routes/api/categories');
 const quizzesRouter = require('./routes/api/quizzes');
 const feedbackRouter = require('./routes/api/feedback');
+const usersRouter = require('./routes/api/users');
 
 const app = express();
 
@@ -24,6 +25,11 @@ app.use(
   '/api/auth',
   authRouter
   // #swagger.tags = ['Auth']
+);
+app.use(
+  '/api/users',
+  usersRouter
+  // #swagger.tags = ['Users']
 );
 app.use('/api/feedback', feedbackRouter);
 app.use(

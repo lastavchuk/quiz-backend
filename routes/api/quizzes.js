@@ -3,25 +3,25 @@ const router = require("express").Router();
 const ctrl = require("../../controllers/quizzes");
 const schemas = require("../../schemas/quizzes");
 const {
-    validateBody,
-    authenticate,
-    isValidQuizId,
-    upload,
+  validateBody,
+  authenticate,
+  isValidQuizId,
+  upload,
 } = require("../../middlewares");
 
 router.post(
-    "/",
-    authenticate,
-    validateBody(schemas.addQuizSchemaJoi),
-    ctrl.addQuiz
+  "/",
+  authenticate,
+  validateBody(schemas.addQuizSchemaJoi),
+  ctrl.addQuiz
 );
 
 router.put(
-    "/:quizId",
-    authenticate,
-    isValidQuizId,
-    validateBody(schemas.updateQuizSchemaJoi),
-    ctrl.updateQuiz
+  "/:quizId",
+  authenticate,
+  isValidQuizId,
+  validateBody(schemas.updateQuizSchemaJoi),
+  ctrl.updateQuiz
 );
 
 router.delete("/:quizId", authenticate, isValidQuizId, ctrl.daleteQuiz);
