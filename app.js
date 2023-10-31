@@ -11,7 +11,6 @@ const usersRouter = require('./routes/api/users');
 
 const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
-const swaggerDocument = require('./swagger.json');
 
 const app = express();
 
