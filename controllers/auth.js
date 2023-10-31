@@ -1,16 +1,16 @@
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-const path = require("path");
-const fs = require("fs/promises");
-const gravatar = require("gravatar");
-const jimp = require("jimp");
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const path = require('path');
+const fs = require('fs/promises');
+const gravatar = require('gravatar');
+const jimp = require('jimp');
 
-const randomId = require("crypto").randomUUID;
+const randomId = require('crypto').randomUUID;
 
-const User = require("../models/user");
-const { ctrlWrapper, HttpError, verifyEmailTmpl } = require("../helpers");
-const sendEmail = require("../helpers/sendEmailUkrNet");
-const errMsg = require("../constants/errors");
+const User = require('../models/user');
+const { ctrlWrapper, HttpError, verifyEmailTmpl } = require('../helpers');
+const sendEmail = require('../helpers/sendEmailUkrNet');
+const errMsg = require('../constants/errors');
 
 const { SECRET_KEY } = process.env;
 
@@ -18,8 +18,8 @@ const register = async (req, res) => {
   const hashPass = await bcrypt.hash(req.body.password, 10);
 
   const userAvatar = gravatar.url(req.body.email, {
-    protocol: "https",
-    s: "100",
+    protocol: 'https',
+    s: '100',
   });
 
   // "https://gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50";
@@ -58,7 +58,7 @@ const login = async (req, res) => {
   }
 
   const payload = { id: user._id };
-  const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "12h" });
+  const token = jwt.sign(payload, SECRET_KEY, { expiresIn: '12h' });
 
   await User.findByIdAndUpdate(user._id, { token });
 
@@ -80,7 +80,7 @@ const current = async (req, res) => {
 };
 
 const logout = async (req, res) => {
-  await User.findByIdAndUpdate(req.user._id, { token: "" });
+  await User.findByIdAndUpdate(req.user._id, { token: '' });
 
   res.status(204).json();
 };
@@ -89,10 +89,10 @@ const logout = async (req, res) => {
 const updateAvatar = async (req, res) => {
   await jimp
     .read(req.file.path)
-    .then((image) => {
+    .then(image => {
       return image.resize(250, 250).quality(75).writeAsync(req.file.path);
     })
-    .catch((err) => {
+    .catch(err => {
       throw HttpError(400, err.message);
     });
 
@@ -102,15 +102,15 @@ const updateAvatar = async (req, res) => {
 
   const avatarPath = path.join(
     __dirname,
-    "../",
-    "public",
-    "avatars",
+    '../',
+    'public',
+    'avatars',
     newFileName
   );
 
   await fs.rename(req.file.path, avatarPath);
 
-  const userAvatar = path.join("avatars", newFileName);
+  const userAvatar = path.join('avatars', newFileName);
   await User.findByIdAndUpdate(req.user._id, { userAvatar });
 
   res.json({ userAvatar });
@@ -127,10 +127,10 @@ const verifyEmail = async (req, res) => {
 
   await User.findByIdAndUpdate(user._id, {
     verify: true,
-    verificationToken: "",
+    verificationToken: '',
   });
 
-  res.json({ message: "Verification successful" });
+  res.json({ message: 'Verification successful' });
 };
 
 const resendVerifyToken = async (req, res) => {
@@ -141,12 +141,12 @@ const resendVerifyToken = async (req, res) => {
   }
 
   if (user.verify) {
-    throw HttpError(400, "Verification has already been passed");
+    throw HttpError(400, 'Verification has already been passed');
   }
 
   await sendEmail(verifyEmailTmpl(email, user.verificationToken));
 
-  res.status(200).json({ message: "Verification email sent" });
+  res.status(200).json({ message: 'Verification email sent' });
 };
 
 module.exports = {

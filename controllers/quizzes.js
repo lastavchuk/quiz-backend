@@ -102,7 +102,7 @@ const updateQuiz = async (req, res) => {
   // }
 };
 
-const daleteQuiz = async (req, res) => {
+const deleteQuiz = async (req, res) => {
   const result = await Quiz.findByIdAndRemove(req.params.quizId);
   if (!result) {
     throw HttpError(404, errMsg.errMsgQuizNotFound);
@@ -224,5 +224,5 @@ module.exports = {
   getSearchQuiz: ctrlWrapper(getSearchQuiz),
   updateQuiz: ctrlWrapper(updateQuiz),
   getRandomQuizzes: ctrlWrapper(getRandomQuizzes),
-  daleteQuiz: ctrlWrapper(daleteQuiz),
+  deleteQuiz: ctrlWrapper(deleteQuiz),
 };

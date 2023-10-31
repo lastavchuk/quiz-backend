@@ -11,7 +11,7 @@ router.get(
     #swagger.tags = ['Feedbacks']
     #swagger.summary = 'Get all feedbacks'
     #swagger.path = '/api/feedback'
-    */
+  */
 );
 
 router.post(
@@ -57,7 +57,7 @@ router.post(
         }
       }
     }
-     */
+  */
 ); // роут для всіх
 
 module.exports = router;

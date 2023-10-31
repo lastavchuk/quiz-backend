@@ -8,15 +8,33 @@ const doc = {
     title: 'QuizMaster API',
     description: 'Here will be a description!!!!',
   },
-  servers: [{ url: process.env.BASE_URL }],
-  host: 'localhost:3000',
-  // basePath: '/',
-  // schemes: ['http', 'https'],
+  //   servers: [{ url: process.env.BASE_URL }],
+  host: process.env.BASE_URL,
+  basePath: '/',
+  schemes: ['http', 'https'],
   consumes: ['application/json'],
   produces: ['application/json'],
-  tags: [],
+  // tags: [],
+  //   definitions: {
+  //     Category: {
+  //       categoryName: 'Car',
+  //       categoryType: constants.audienceArr[0],
+  //     },
+  //     Feedback: {
+  //       quizId: '653b7ab5f18b4cc7fb04f0a2',
+  //       userName: 'Alex',
+  //       userAvatar:
+  //         'https://gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50',
+  //       rate: 5,
+  //       comment: 'Very nice quiz',
+  //     },
+  //   },
   components: {
     schemas: {
+      Category: {
+        categoryName: 'Car',
+        categoryType: constants.audienceArr[0],
+      },
       Feedback: {
         quizId: '653b7ab5f18b4cc7fb04f0a2',
         userName: 'Alex',
@@ -45,15 +63,7 @@ const doc = {
 };
 
 const outputFile = './swagger.json';
-// const endpointsFiles = [
-//     "./routes/api/auth.js",
-//     "./routes/api/categories.js",
-//     "./routes/api/feedback.js",
-//     "./routes/api/quizzes.js",
-//     "./routes/api/questions.js",
-// ];
 const endpointsFiles = ['./routes/api/*.js'];
-// const endpointsFiles = ["./src/endpoints.js"];
 
 swaggerAutogen(outputFile, endpointsFiles, doc).then(() => {
   require('./server');

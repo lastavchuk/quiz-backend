@@ -1,9 +1,9 @@
-const router = require("express").Router();
+const router = require('express').Router();
 
-const ctrl = require("../../controllers/questions");
-const schemas = require("../../schemas/");
-const { validateBody, authenticate, upload } = require("../../middlewares");
+const ctrl = require('../../controllers/questions');
+const schemas = require('../../schemas/');
+const { validateBody, authenticate, upload } = require('../../middlewares');
 
-router.post("/", authenticate, ctrl.addQuestion);
+router.post('/', authenticate, ctrl.addQuestion);
 
 module.exports = router;
