@@ -18,18 +18,6 @@ const getCategories = async (req, res) => {
 };
 
 const addCategory = async (req, res) => {
-  /*
-    #swagger.requestBody = {
-      required: true,
-      content: {
-        "application/json": {
-          schema: {
-            $ref: "#/components/schemas/Category"
-          }  
-        }
-      }
-    }
-  */
   const result = await Category.create({ ...req.body });
   res.status(201).json(result);
 };
