@@ -70,8 +70,33 @@ const addPassedQuiz = async (req, res, next) => {
   return res.json('route is ok');
 };
 
+// const getPassedQuizzes = async (req, res) => {
+//   const { _id } = req.user;
+
+//   const passedQuizzes = await User.findOne(_id);
+//   console.log('passedQuizzes: ', passedQuizzes);
+
+// const resArray = passedQuizzes.map(item => item.quizId);
+// const idArray = resArray.toString().split(',');
+// console.log(passedQuizzes);
+// TODO
+// if(passedQuizzes.length===0){
+//   console.log('нет тестов');
+
+// }
+// const result = await Quiz.find({ _id: { $in: idArray } });
+
+// const rewers = result.map(item => {
+//   console.log(item._id);
+//   return passedQuizzes.map(el => console.log((item._id = el.quizId)));
+// });
+
+//   res.json('test look');
+// };
+
 module.exports = {
   updateFavorite: ctrlWrapper(updateFavorite),
   getAllFavorites: ctrlWrapper(getAllFavorites),
   addPassedQuiz: ctrlWrapper(addPassedQuiz),
+  // getPassedQuizzes: ctrlWrapper(getPassedQuizzes),
 };

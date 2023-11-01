@@ -15,5 +15,5 @@ router.patch(
 );
 
 router.patch('/passed-quiz', authenticate, ctrl.addPassedQuiz);
-
+router.get('/test', authenticate, ctrl.getPassedQuizzes);
 module.exports = router;
