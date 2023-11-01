@@ -17,12 +17,25 @@ const updateUserPassedQuizzesSchema = Joi.object({
       'string.empty': errMsg.errFieldIsrequired('favorites field'),
       'any.required': errMsg.errFieldIsrequired('favorites field'),
     }),
-  quantityQuestions: 10,
-  correctAnswers: 5,
+  quantityQuestions: Joi.number()
+    .min(1)
+    .required()
+    .messages({
+      // asd: errMsg.errFieldIsrequired('favorites field'),
+      'any.required': errMsg.errFieldIsrequired('quantityQuestions field'),
+    }),
+  correctAnswers: Joi.number()
+    .min(0)
+    .required()
+    .messages({
+      // asd: errMsg.errFieldIsrequired('favorites field'),
+      'any.required': errMsg.errFieldIsrequired('correctAnswers field'),
+    }),
 });
 
 const schemas = {
   updateFavoritesSchema,
+  updateUserPassedQuizzesSchema,
 };
 
 module.exports = schemas;

@@ -14,6 +14,12 @@ router.patch(
   ctrl.updateFavorite
 );
 
-router.patch('/passed-quiz', authenticate, ctrl.addPassedQuiz);
-router.get('/test', authenticate, ctrl.getPassedQuizzes);
+router.patch(
+  '/passed-quiz',
+  authenticate,
+  validateBody(schemas.updateUserPassedQuizzesSchema),
+  ctrl.addPassedQuiz
+);
+
+// router.get('/test', authenticate, ctrl.getPassedQuizzes);
 module.exports = router;

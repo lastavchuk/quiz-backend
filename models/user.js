@@ -31,6 +31,10 @@ const userSchemaMongoose = new Schema(
       type: String,
       required: [true, errMsg.errFieldIsrequired('Avatar image')],
     },
+    passedQuizzes: {
+      type: [Object],
+    },
+
     token: String,
     verify: {
       type: Boolean,
@@ -42,6 +46,7 @@ const userSchemaMongoose = new Schema(
     },
     favorites: { type: [String], default: [] },
   },
+
   { versionKey: false, timestamps: true }
 );
 
