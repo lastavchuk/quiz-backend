@@ -14,4 +14,6 @@ router.patch(
   ctrl.updateFavorite
 );
 
+router.patch('/passed-quiz', authenticate, ctrl.addPassedQuiz);
+
 module.exports = router;

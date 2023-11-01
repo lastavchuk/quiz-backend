@@ -44,7 +44,34 @@ const updateFavorite = async (req, res, next) => {
   return res.json({ userId: result._id, favorites: result.favorites });
 };
 
+/* req.body = {
+    "quizId": "653b7f41b96bb14670aac9ed",
+    "quantityQuestions": 10,
+    "correctAnswers": 5
+}  */
+
+const addPassedQuiz = async (req, res, next) => {
+  //   const result = await User.findByIdAndUpdate(
+  //     req.user._id,
+  //     {
+  //       $addToSet: { passedQuizzes: req.body },
+  //       $inc: {
+  //         totalQuestions: req.body.quantityQuestions,
+  //         totalAnswers: req.body.correctAnswers,
+  //       },
+  //     },
+  //     { new: true, select: "totalQuestions totalAnswers average passedQuizzes" }
+  //   );
+
+  //   result.average = (result.totalAnswers / result.totalQuestions) * 100;
+
+  //   await result.save();
+
+  return res.json('route is ok');
+};
+
 module.exports = {
   updateFavorite: ctrlWrapper(updateFavorite),
   getAllFavorites: ctrlWrapper(getAllFavorites),
+  addPassedQuiz: ctrlWrapper(addPassedQuiz),
 };
