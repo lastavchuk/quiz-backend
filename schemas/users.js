@@ -10,6 +10,17 @@ const updateFavoritesSchema = Joi.object({
     }),
 });
 
+const updateUserPassedQuizzesSchema = Joi.object({
+  quizId: Joi.string()
+    .required()
+    .messages({
+      'string.empty': errMsg.errFieldIsrequired('favorites field'),
+      'any.required': errMsg.errFieldIsrequired('favorites field'),
+    }),
+  quantityQuestions: 10,
+  correctAnswers: 5,
+});
+
 const schemas = {
   updateFavoritesSchema,
 };
