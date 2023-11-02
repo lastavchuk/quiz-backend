@@ -22,6 +22,6 @@ router.patch(
 );
 
 /* to delete */
-router.get('/test', authenticate, ctrl.getPassedQuizzes);
+// router.get('/test', authenticate, ctrl.getPassedQuizzes);
 
 module.exports = router;

@@ -70,40 +70,8 @@ const addPassedQuiz = async (req, res, next) => {
   return res.json(result);
 };
 
-/* remove to quizzes controllers */
-const getPassedQuizzes = async (req, res) => {
-  const { _id } = req.user;
-
-  const { passedQuizzes } = await User.findOne(_id);
-
-  const resArray = passedQuizzes.map(item => item.quizId);
-  const idArray = resArray.toString().split(',');
-
-  // TODO
-  // if(passedQuizzes.length===0){
-  //   console.log('нет тестов');
-
-  // }
-  const result = await Quiz.find({ _id: { $in: idArray } });
-
-  const rewers = result.map(item => {
-    const matchingObj = passedQuizzes.find(
-      quiz => item._id.toString() === quiz.quizId.toString()
-    );
-
-    return {
-      ...item.toObject(),
-      quantityQuestions: matchingObj.quantityQuestions,
-      correctAnswers: matchingObj.correctAnswers,
-    };
-  });
-
-  res.json(rewers);
-};
-
 module.exports = {
   updateFavorite: ctrlWrapper(updateFavorite),
   getAllFavorites: ctrlWrapper(getAllFavorites),
   addPassedQuiz: ctrlWrapper(addPassedQuiz),
-  getPassedQuizzes: ctrlWrapper(getPassedQuizzes) /* to delete  */,
 };

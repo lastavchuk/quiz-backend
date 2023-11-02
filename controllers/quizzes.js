@@ -1,6 +1,7 @@
 const Quiz = require('../models/quiz');
 const Question = require('../models/question');
 const Category = require('../models/category');
+const User = require('../models/user');
 const { ctrlWrapper, HttpError } = require('../helpers');
 const errMsg = require('../constants/errors');
 
@@ -146,7 +147,7 @@ const getAllQuizCreateUser = async (req, res) => {
   res.json(prepareData);
 };
 // *****************************
-const getOnePassed = async (req, res) => {
+const patchOnePassed = async (req, res) => {
   const quizId = req.params.quizId;
   const result = await Quiz.findOneAndUpdate(
     {
@@ -253,14 +254,46 @@ const getRandomQuizzes = async (req, res) => {
   res.status(201).json(result);
   // !!!! Щоб повертало однакову к-сть по замовчуванню
 };
+/* to quizzes controllers */
+const getPassedQuizzes = async (req, res) => {
+  const { _id } = req.user;
 
+  const { passedQuizzes } = await User.findOne(_id);
+
+  const resArray = passedQuizzes.map(item => item.quizId);
+  const idArray = resArray.toString().split(',');
+
+  // TODO
+  // if(passedQuizzes.length===0){
+  //   console.log('нет тестов');
+
+  // }
+  const result = await Quiz.find({ _id: { $in: idArray } })
+    .populate('quizCategory', '-_id categoryName')
+    .sort('-createdAt');
+
+  const rewers = result.map(item => {
+    const matchingObj = passedQuizzes.find(
+      quiz => item._id.toString() === quiz.quizId.toString()
+    );
+
+    return {
+      ...item.toObject(),
+      quantityQuestions: matchingObj.quantityQuestions,
+      correctAnswers: matchingObj.correctAnswers,
+    };
+  });
+
+  res.json(rewers);
+};
 module.exports = {
   addQuiz: ctrlWrapper(addQuiz),
   getAllQuizCreateUser: ctrlWrapper(getAllQuizCreateUser),
-  getOnePassed: ctrlWrapper(getOnePassed),
+  patchOnePassed: ctrlWrapper(patchOnePassed),
   getOneQuiz: ctrlWrapper(getOneQuiz),
   getSearchQuiz: ctrlWrapper(getSearchQuiz),
   updateQuiz: ctrlWrapper(updateQuiz),
   getRandomQuizzes: ctrlWrapper(getRandomQuizzes),
   deleteQuiz: ctrlWrapper(deleteQuiz),
+  getPassedQuizzes: ctrlWrapper(getPassedQuizzes) /* to  */,
 };
