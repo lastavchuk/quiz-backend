@@ -1,11 +1,21 @@
 const { ctrlWrapper } = require('../helpers');
 const Feedback = require('../models/feedback');
+const Quiz = require('../models/quiz');
 
 const addFeedback = async (req, res) => {
   const result = await Feedback.create({ ...req.body });
   res.status(201).json(result);
 };
+const addFeedbackQuizId = async (req, res) => {
+  const result = await Feedback.create({ ...req.body });
+  const quizId = req.params.quizId;
+  const { rate } = req.body;
+  const oldRate = await Quiz.findById(quizId);
+  const average = (oldRate.rate + rate) / oldRate.totalPassed;
+  const resQuizes = await Quiz.findByIdAndUpdate(quizId, { average });
 
+  res.status(201).json(resQuizes);
+};
 const getAllFeedbacks = async (req, res) => {
   const { page = 1, limit = 6 } = req.query;
   const skip = (page - 1) * limit;
@@ -17,4 +27,5 @@ const getAllFeedbacks = async (req, res) => {
 module.exports = {
   addFeedback: ctrlWrapper(addFeedback),
   getAllFeedbacks: ctrlWrapper(getAllFeedbacks),
+  addFeedbackQuizId: ctrlWrapper(addFeedbackQuizId),
 };

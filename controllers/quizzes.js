@@ -206,7 +206,7 @@ const getSearchQuiz = async (req, res) => {
         // { quizName: { $regex: q, $options: "i" } },
         { quizName: qq },
         { quizType: type },
-        { rate: rate },
+        { rate: { $gte: Number(rate) - 0.5, $lt: Number(rate) + 0.5 } },
         { quizCategory: oneCategory }, // замінити при пошуку по id на category
       ],
     },
@@ -264,9 +264,8 @@ const getPassedQuizzes = async (req, res) => {
   const idArray = resArray.toString().split(',');
 
   // TODO
-  if(passedQuizzes.length===0){
-    console.log('Not found quiz');
-
+  if (passedQuizzes.length === 0) {
+    return res.json([]);
   }
   const result = await Quiz.find({ _id: { $in: idArray } })
     .populate('quizCategory', '-_id categoryName')
@@ -286,6 +285,19 @@ const getPassedQuizzes = async (req, res) => {
 
   res.json(rewers);
 };
+const getTotalAllQuizzes = async (req, res) => {
+  const result = await Quiz.aggregate([
+    [
+      {
+        $group: {
+          _id: null,
+          total: { $sum: '$totalPassed' },
+        },
+      },
+    ],
+  ]);
+  res.json(result);
+};
 module.exports = {
   addQuiz: ctrlWrapper(addQuiz),
   getAllQuizCreateUser: ctrlWrapper(getAllQuizCreateUser),
@@ -296,4 +308,5 @@ module.exports = {
   getRandomQuizzes: ctrlWrapper(getRandomQuizzes),
   deleteQuiz: ctrlWrapper(deleteQuiz),
   getPassedQuizzes: ctrlWrapper(getPassedQuizzes) /* to  */,
+  getTotalAllQuizzes: ctrlWrapper(getTotalAllQuizzes),
 };
