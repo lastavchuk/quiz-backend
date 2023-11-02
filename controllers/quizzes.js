@@ -285,19 +285,19 @@ const getPassedQuizzes = async (req, res) => {
 
   res.json(rewers);
 };
+
 const getTotalAllQuizzes = async (req, res) => {
   const result = await Quiz.aggregate([
-    [
-      {
-        $group: {
-          _id: null,
-          total: { $sum: '$totalPassed' },
-        },
+    {
+      $group: {
+        _id: null,
+        total: { $sum: '$totalPassed' },
       },
-    ],
+    },
   ]);
-  res.json(result);
+  res.json(result[0].total);
 };
+
 module.exports = {
   addQuiz: ctrlWrapper(addQuiz),
   getAllQuizCreateUser: ctrlWrapper(getAllQuizCreateUser),
