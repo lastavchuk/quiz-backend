@@ -25,7 +25,7 @@ router.put(
 );
 
 // get all and filter quizzes
-router.get('/search', authenticate, ctrl.getSearchQuiz);
+router.get('/', authenticate, ctrl.getSearchQuiz);
 
 // get random quiz
 router.get('/random', ctrl.getRandomQuizzes);

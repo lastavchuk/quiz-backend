@@ -264,10 +264,10 @@ const getPassedQuizzes = async (req, res) => {
   const idArray = resArray.toString().split(',');
 
   // TODO
-  // if(passedQuizzes.length===0){
-  //   console.log('нет тестов');
+  if(passedQuizzes.length===0){
+    console.log('Not found quiz');
 
-  // }
+  }
   const result = await Quiz.find({ _id: { $in: idArray } })
     .populate('quizCategory', '-_id categoryName')
     .sort('-createdAt');
