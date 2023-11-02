@@ -11,7 +11,7 @@ const getAllFeedbacks = async (req, res) => {
   const skip = (page - 1) * limit;
   const options = { skip, limit };
   const result = await Feedback.find({}, '', options).sort('-createdAt');
-  res.status(201).json(result);
+  res.json(result);
 };
 
 module.exports = {

@@ -3,6 +3,18 @@ const errMsg = require('../constants/errors');
 const regexp = require('../constants/regexps');
 const handleSaveError = require('../helpers/handleSaveError');
 
+const passedQuizSchema = new Schema({
+  quizId: {
+    type: String,
+  },
+  quantityQuestions: {
+    type: Number,
+  },
+  correctAnswers: {
+    type: Number,
+  },
+});
+
 const userSchemaMongoose = new Schema(
   {
     name: {
@@ -31,6 +43,12 @@ const userSchemaMongoose = new Schema(
       type: String,
       required: [true, errMsg.errFieldIsrequired('Avatar image')],
     },
+    passedQuizzes: {
+      type: [passedQuizSchema],
+    },
+    totalQuestions: { type: Number, default: 0 },
+    totalAnswers: { type: Number, default: 0 },
+    average: { type: Number, default: 0 },
     token: String,
     verify: {
       type: Boolean,
@@ -42,6 +60,7 @@ const userSchemaMongoose = new Schema(
     },
     favorites: { type: [String], default: [] },
   },
+
   { versionKey: false, timestamps: true }
 );
 

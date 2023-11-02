@@ -3,15 +3,14 @@ const logger = require('morgan');
 const cors = require('cors');
 require('dotenv').config();
 
-const swaggerJsdoc = require('swagger-jsdoc');
-const swaggerUi = require('swagger-ui-express');
-// const swaggerDocument = require('./swagger.json');
-
 const authRouter = require('./routes/api/auth');
 const categoriesRouter = require('./routes/api/categories');
 const quizzesRouter = require('./routes/api/quizzes');
 const feedbackRouter = require('./routes/api/feedback');
 const usersRouter = require('./routes/api/users');
+
+const swaggerJsdoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
 
 const app = express();
 
@@ -20,6 +19,27 @@ const formatsLogger = app.get('env') === 'development' ? 'dev' : 'short';
 app.use(logger(formatsLogger));
 app.use(cors());
 app.use(express.json());
+
+app.use(
+  '/api/auth',
+  authRouter
+  // #swagger.tags = ['Auth']
+);
+app.use(
+  '/api/users',
+  usersRouter
+  // #swagger.tags = ['Users']
+);
+app.use('/api/feedback', feedbackRouter);
+app.use(
+  /*
+     #swagger.tags = ['Categories']
+     #swagger.security = [{ "apiKeyAuth": [] }] 
+    */
+  '/api/categories',
+  categoriesRouter
+);
+app.use('/api/quizzes', quizzesRouter);
 
 const optionsSwagger = {
   definition: {
@@ -44,31 +64,11 @@ const optionsSwagger = {
       },
     ],
   },
-  apis: ['./routes/*.js'],
+  apis: ['./routes/api/*.js'],
 };
-const swaggerDocument = swaggerJsdoc(optionsSwagger);
-
-app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-app.use(
-  '/api/auth',
-  authRouter
-  // #swagger.tags = ['Auth']
-);
-app.use(
-  '/api/users',
-  usersRouter
-  // #swagger.tags = ['Users']
-);
-app.use('/api/feedback', feedbackRouter);
-app.use(
-  /*
-     #swagger.tags = ['Categories']
-     #swagger.security = [{ "apiKeyAuth": [] }] 
-    */
-  '/api/categories',
-  categoriesRouter
-);
-app.use('/api/quizzes', quizzesRouter);
+const swaggerSpecs = swaggerJsdoc(optionsSwagger);
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
+// app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use((req, res) => {
   res.status(404).json({ message: 'Route not found' });

@@ -234,7 +234,7 @@ const getSearchQuiz = async (req, res) => {
 };
 
 const getRandomQuizzes = async (req, res) => {
-  const { quizType, page = 1, limit = 8, sortby } = req.query;
+  const { quizType, page = 1, limit = 4, sortby } = req.query;
   const skip = (page - 1) * limit;
   const options = { skip, limit };
   let filter = {};
@@ -251,6 +251,7 @@ const getRandomQuizzes = async (req, res) => {
     ]);
   }
   res.status(201).json(result);
+  // !!!! Щоб повертало однакову к-сть по замовчуванню
 };
 
 module.exports = {
