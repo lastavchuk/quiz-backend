@@ -51,52 +51,59 @@ const updateFavorite = async (req, res, next) => {
 }  */
 
 const addPassedQuiz = async (req, res, next) => {
-  //   const result = await User.findByIdAndUpdate(
-  //     req.user._id,
-  //     {
-  //       $addToSet: { passedQuizzes: req.body },
-  //       $inc: {
-  //         totalQuestions: req.body.quantityQuestions,
-  //         totalAnswers: req.body.correctAnswers,
-  //       },
-  //     },
-  //     { new: true, select: "totalQuestions totalAnswers average passedQuizzes" }
-  //   );
+  const result = await User.findByIdAndUpdate(
+    req.user._id,
+    {
+      $addToSet: { passedQuizzes: req.body },
+      $inc: {
+        totalQuestions: req.body.quantityQuestions,
+        totalAnswers: req.body.correctAnswers,
+      },
+    },
+    { new: true, select: 'totalQuestions totalAnswers average passedQuizzes' }
+  );
 
-  //   result.average = (result.totalAnswers / result.totalQuestions) * 100;
+  result.average = (result.totalAnswers / result.totalQuestions) * 100;
 
-  //   await result.save();
+  await result.save();
 
-  return res.json('route is ok');
+  return res.json(result);
 };
 
-// const getPassedQuizzes = async (req, res) => {
-//   const { _id } = req.user;
+/* remove to quizzes controllers */
+const getPassedQuizzes = async (req, res) => {
+  const { _id } = req.user;
 
-//   const passedQuizzes = await User.findOne(_id);
-//   console.log('passedQuizzes: ', passedQuizzes);
+  const { passedQuizzes } = await User.findOne(_id);
 
-// const resArray = passedQuizzes.map(item => item.quizId);
-// const idArray = resArray.toString().split(',');
-// console.log(passedQuizzes);
-// TODO
-// if(passedQuizzes.length===0){
-//   console.log('нет тестов');
+  const resArray = passedQuizzes.map(item => item.quizId);
+  const idArray = resArray.toString().split(',');
 
-// }
-// const result = await Quiz.find({ _id: { $in: idArray } });
+  // TODO
+  // if(passedQuizzes.length===0){
+  //   console.log('нет тестов');
 
-// const rewers = result.map(item => {
-//   console.log(item._id);
-//   return passedQuizzes.map(el => console.log((item._id = el.quizId)));
-// });
+  // }
+  const result = await Quiz.find({ _id: { $in: idArray } });
 
-//   res.json('test look');
-// };
+  const rewers = result.map(item => {
+    const matchingObj = passedQuizzes.find(
+      quiz => item._id.toString() === quiz.quizId.toString()
+    );
+
+    return {
+      ...item.toObject(),
+      quantityQuestions: matchingObj.quantityQuestions,
+      correctAnswers: matchingObj.correctAnswers,
+    };
+  });
+
+  res.json(rewers);
+};
 
 module.exports = {
   updateFavorite: ctrlWrapper(updateFavorite),
   getAllFavorites: ctrlWrapper(getAllFavorites),
   addPassedQuiz: ctrlWrapper(addPassedQuiz),
-  // getPassedQuizzes: ctrlWrapper(getPassedQuizzes),
+  getPassedQuizzes: ctrlWrapper(getPassedQuizzes) /* to delete  */,
 };

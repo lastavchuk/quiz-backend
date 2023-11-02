@@ -19,16 +19,16 @@ const updateUserPassedQuizzesSchema = Joi.object({
     }),
   quantityQuestions: Joi.number()
     .min(1)
+    .integer()
     .required()
     .messages({
-      // asd: errMsg.errFieldIsrequired('favorites field'),
       'any.required': errMsg.errFieldIsrequired('quantityQuestions field'),
     }),
   correctAnswers: Joi.number()
     .min(0)
+    .integer()
     .required()
     .messages({
-      // asd: errMsg.errFieldIsrequired('favorites field'),
       'any.required': errMsg.errFieldIsrequired('correctAnswers field'),
     }),
 });
