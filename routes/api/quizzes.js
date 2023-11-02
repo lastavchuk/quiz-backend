@@ -24,15 +24,14 @@ router.put(
   ctrl.updateQuiz
 );
 
-router.delete('/:quizId', authenticate, isValidQuizId, ctrl.deleteQuiz);
+// get all and filter quizzes
+router.get('/', authenticate, ctrl.getSearchQuiz);
 
 // get random quiz
 router.get('/random', ctrl.getRandomQuizzes);
 router.get('/myquiz', authenticate, ctrl.getAllQuizCreateUser);
 router.patch('/:quizId', authenticate, isValidQuizId, ctrl.getOnePassed); // ???????
 router.get('/:quizId', authenticate, isValidQuizId, ctrl.getOneQuiz);
-
-// get all and filter quizzes
-router.get('/', authenticate, ctrl.getSearchQuiz);
+router.delete('/:quizId', authenticate, isValidQuizId, ctrl.deleteQuiz);
 
 module.exports = router;
