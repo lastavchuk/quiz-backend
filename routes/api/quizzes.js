@@ -29,6 +29,7 @@ router.get('/', authenticate, ctrl.getSearchQuiz);
 
 // get random quiz
 router.get('/random', ctrl.getRandomQuizzes);
+router.get('/total', ctrl.getTotalAllQuizzes);
 router.get('/myquiz', authenticate, ctrl.getAllQuizCreateUser);
 router.get('/passedquiz', authenticate, ctrl.getPassedQuizzes);
 router.patch('/:quizId', authenticate, isValidQuizId, ctrl.patchOnePassed); // ???????

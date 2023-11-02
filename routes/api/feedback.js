@@ -120,7 +120,7 @@ router.post(
 router.post(
   '/:quizId',
   validateBody(schemas.feedbackSchemaJoi),
-  ctrl.addFeedback
+  ctrl.addFeedbackQuizId
 );
 
 module.exports = router;
