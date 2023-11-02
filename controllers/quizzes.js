@@ -1,5 +1,7 @@
 const Quiz = require('../models/quiz');
 const Question = require('../models/question');
+const Category = require('../models/category');
+const User = require('../models/user');
 const { ctrlWrapper, HttpError } = require('../helpers');
 const errMsg = require('../constants/errors');
 
@@ -118,17 +120,34 @@ const deleteQuiz = async (req, res) => {
 
 // **************************************
 const getAllQuizCreateUser = async (req, res) => {
-  // додати фаворіти та
+  const { page = 1, limit = 6 } = req.query;
 
+  const skip = (page - 1) * limit;
+  const options = { skip, limit };
   const { _id } = req.user;
   const par = { owner: _id };
-  const result = await Quiz.find(par)
-    .populate('quizCategory')
-    .populate('owner', '_id name ');
-  res.json(result); // змінити на фаворіти
+  const result = await Quiz.find(par, '_id quizName rate totalPassed', options)
+    .populate('quizCategory', '-_id categoryName')
+    .populate('owner', 'favorites');
+  // *************************// чи знаходиться в обраних
+  const prepareData = result.map(el => {
+    const newEl = JSON.parse(JSON.stringify(el));
+    const { _id } = newEl;
+    const { favorites } = newEl.owner;
+    const isFavorite = favorites.find(favId => favId === _id);
+
+    if (isFavorite) {
+      newEl.owner.favorites = true;
+    } else {
+      newEl.owner.favorites = false;
+    }
+    return newEl;
+  });
+
+  res.json(prepareData);
 };
 // *****************************
-const getOnePassed = async (req, res) => {
+const patchOnePassed = async (req, res) => {
   const quizId = req.params.quizId;
   const result = await Quiz.findOneAndUpdate(
     {
@@ -147,7 +166,11 @@ const getOnePassed = async (req, res) => {
 
 const getOneQuiz = async (req, res) => {
   const id = req.params.quizId;
-  const result = await Quiz.findOne({ _id: id }).populate('quizCategory');
+
+  const result = await Question.findOne(
+    { quizId: id },
+    'image question answers time'
+  ).populate('quizId', 'quizName');
   res.json(result);
 };
 // *****************************************
@@ -155,45 +178,60 @@ const getSearchQuiz = async (req, res) => {
   const { page = 1, limit = 6, q, type, rate, category } = req.query;
 
   const skip = (page - 1) * limit;
+  // *******************************************//
+  // let filter = {};
+  // if (q) {
+  //   filter.quizName = new RegExp(q, 'i');
+  // }
+  // if (type) {
+  //   filter.quizType = type;
+  // }
+  // if (rate) {
+  //   filter.rate = { $gte: rate }; // більше або рівно
+  //   // якщо потрібно менше або рівно, то { $$lte: rate }
+  // }
+  // if (category) {
+  //   filter.quizCategory = category;
+  // }
+  // const result = await Quiz.find(filter, '', { skip, limit });
+  // *******************************************//
+  const options = { skip, limit };
+  const qq = new RegExp(`${q}`, 'i');
 
-  let filter = {};
-  if (q) {
-    filter.quizName = new RegExp(q, 'i');
-  }
-  if (type) {
-    filter.quizType = type;
-  }
-  if (rate) {
-    filter.rate = { $gte: rate }; // більше або рівно
-    // якщо потрібно менше або рівно, то { $$lte: rate }
-  }
-  if (category) {
-    filter.quizCategory = category;
-  }
-  const result = await Quiz.find(filter, '', { skip, limit });
+  const catId = await Category.find({ categoryName: category }); // видалити 2 строки якщо пошук по id
+  const oneCategory = catId.map(itm => itm._id); // ------
+  const result = await Quiz.find(
+    {
+      $or: [
+        // { quizName: { $regex: q, $options: "i" } },
+        { quizName: qq },
+        { quizType: type },
+        { rate: rate },
+        { quizCategory: oneCategory }, // замінити при пошуку по id на category
+      ],
+    },
+    '',
+    options
+  )
+    .populate('quizCategory')
+    .populate('owner', 'favorites');
 
-  // const options = { skip, limit };
-  // const qq = new RegExp("^"+q, "i");
+  // *************************// чи знаходиться в обраних
+  const prepareData = result.map(el => {
+    const newEl = JSON.parse(JSON.stringify(el));
+    const { _id } = newEl;
+    const { favorites } = newEl.owner;
+    const isFavorite = favorites.find(favId => favId === _id);
 
-  // const catId = await Category.find({ categoryName: category }); // видалити 2 строки якщо пошук по id
-  // const oneCategory = catId.map((itm) => itm._id); // ------
-  // const result = await Quiz.find(
-  //     {
-  //         $or: [
-  //             // { quizName: { $regex: q, $options: "i" } },
-  //             { quizName: qq },
-  //             { quizType: type },
-  //             { rate: rates },
-  //             { quizCategory: oneCategory }, // замінити при пошуку по id на category
-  //         ],
-  //     },
-  //     "",
-  //     options
-  // )
-  //     .populate("quizCategory")
-  //     .populate("owner", "_id name ");
+    if (isFavorite) {
+      newEl.owner.favorites = true;
+    } else {
+      newEl.owner.favorites = false;
+    }
+    return newEl;
+  });
 
-  res.json(result);
+  res.json(prepareData);
 };
 
 const getRandomQuizzes = async (req, res) => {
@@ -216,14 +254,46 @@ const getRandomQuizzes = async (req, res) => {
   res.status(201).json(result);
   // !!!! Щоб повертало однакову к-сть по замовчуванню
 };
+/* to quizzes controllers */
+const getPassedQuizzes = async (req, res) => {
+  const { _id } = req.user;
 
+  const { passedQuizzes } = await User.findOne(_id);
+
+  const resArray = passedQuizzes.map(item => item.quizId);
+  const idArray = resArray.toString().split(',');
+
+  // TODO
+  if(passedQuizzes.length===0){
+    console.log('Not found quiz');
+
+  }
+  const result = await Quiz.find({ _id: { $in: idArray } })
+    .populate('quizCategory', '-_id categoryName')
+    .sort('-createdAt');
+
+  const rewers = result.map(item => {
+    const matchingObj = passedQuizzes.find(
+      quiz => item._id.toString() === quiz.quizId.toString()
+    );
+
+    return {
+      ...item.toObject(),
+      quantityQuestions: matchingObj.quantityQuestions,
+      correctAnswers: matchingObj.correctAnswers,
+    };
+  });
+
+  res.json(rewers);
+};
 module.exports = {
   addQuiz: ctrlWrapper(addQuiz),
   getAllQuizCreateUser: ctrlWrapper(getAllQuizCreateUser),
-  getOnePassed: ctrlWrapper(getOnePassed),
+  patchOnePassed: ctrlWrapper(patchOnePassed),
   getOneQuiz: ctrlWrapper(getOneQuiz),
   getSearchQuiz: ctrlWrapper(getSearchQuiz),
   updateQuiz: ctrlWrapper(updateQuiz),
   getRandomQuizzes: ctrlWrapper(getRandomQuizzes),
   deleteQuiz: ctrlWrapper(deleteQuiz),
+  getPassedQuizzes: ctrlWrapper(getPassedQuizzes) /* to  */,
 };

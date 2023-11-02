@@ -30,7 +30,8 @@ router.get('/', authenticate, ctrl.getSearchQuiz);
 // get random quiz
 router.get('/random', ctrl.getRandomQuizzes);
 router.get('/myquiz', authenticate, ctrl.getAllQuizCreateUser);
-router.patch('/:quizId', authenticate, isValidQuizId, ctrl.getOnePassed); // ???????
+router.get('/passedquiz', authenticate, ctrl.getPassedQuizzes);
+router.patch('/:quizId', authenticate, isValidQuizId, ctrl.patchOnePassed); // ???????
 router.get('/:quizId', authenticate, isValidQuizId, ctrl.getOneQuiz);
 router.delete('/:quizId', authenticate, isValidQuizId, ctrl.deleteQuiz);
 
