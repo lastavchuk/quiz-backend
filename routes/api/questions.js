@@ -9,6 +9,7 @@ const {
   isValidQuestionId,
 } = require('../../middlewares');
 
+// Add new question to quiz with quizId
 router.post(
   '/:quizId',
   authenticate,
@@ -17,8 +18,10 @@ router.post(
   ctrl.addQuestion
 );
 
+// Get question from questionId
 router.get('/:questionId', authenticate, isValidQuestionId, ctrl.getQuestion);
 
+// Update question from questionId
 router.put(
   '/:questionId',
   authenticate,
@@ -27,6 +30,7 @@ router.put(
   ctrl.updateQuestion
 );
 
+// Delete question from questionId
 router.delete(
   '/:questionId',
   authenticate,
