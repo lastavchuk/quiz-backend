@@ -47,7 +47,6 @@ const updateQuiz = async (req, res) => {
     quizName,
     rate,
     totalPassed,
-    // owner: req.user._id,
   };
 
   const resQuiz = await Quiz.findByIdAndUpdate(req.params.quizId, quiz, {
@@ -105,14 +104,22 @@ const updateQuiz = async (req, res) => {
 };
 
 const deleteQuiz = async (req, res) => {
+  const { quizId } = req.params;
+
   const result = await Quiz.findByIdAndRemove(req.params.quizId);
   if (!result) {
     throw HttpError(404, errMsg.errMsgQuizNotFound);
   }
 
-  await Question.deleteMany({ quizId: req.params.quizId });
+  await Promise.all([
+    Question.deleteMany({ quizId: quizId }), // delete quiz by id
+    User.updateMany(
+      { 'passedQuizzes.quizId': quizId },
+      { $pull: { passedQuizzes: { quizId: quizId } } }
+    ), // delete all id quizzes from passed
+    User.updateMany({}, { $pull: { favorites: quizId } }), // delete all id quizzes from favorites
+  ]);
 
-  // Видалити ід тексту у всіх юзерів з обраних та пройдених !!!
   // В кого було видалено, перерахувати середній бал
 
   res.json({ message: 'Quiz deleted!' });
@@ -200,19 +207,20 @@ const getSearchQuiz = async (req, res) => {
 
   const catId = await Category.find({ categoryName: category }); // видалити 2 строки якщо пошук по id
   const oneCategory = catId.map(itm => itm._id); // ------
-  const result = await Quiz.find(
-    {
-      $or: [
-        // { quizName: { $regex: q, $options: "i" } },
-        { quizName: qq },
-        { quizType: type },
-        { rate: { $gte: Number(rate) - 0.5, $lt: Number(rate) + 0.5 } },
-        { quizCategory: oneCategory }, // замінити при пошуку по id на category
-      ],
-    },
-    '',
-    options
-  )
+
+  const arrOprions = [
+    { quizName: qq },
+    { quizType: type },
+    { quizCategory: oneCategory },
+  ]; // замінити при пошуку по id на category
+
+  if (rate) {
+    arrOprions.push({
+      rate: { $gte: Number(rate) - 0.5, $lt: Number(rate) + 0.5 },
+    });
+  }
+
+  const result = await Quiz.find({ $or: arrOprions }, '', options)
     .populate('quizCategory')
     .populate('owner', 'favorites');
 
@@ -235,25 +243,42 @@ const getSearchQuiz = async (req, res) => {
 };
 
 const getRandomQuizzes = async (req, res) => {
-  const { quizType, page = 1, limit = 4, sortby } = req.query;
-  const skip = (page - 1) * limit;
-  const options = { skip, limit };
-  let filter = {};
-  if (quizType !== undefined) {
-    filter = { quizType };
-  }
-  let result = {};
-  if (sortby === 'date') {
-    result = await Quiz.find(filter, '', options).sort('-createdAt');
-  } else {
-    result = await Quiz.aggregate([
-      { $match: filter },
-      { $sample: { size: Number(limit) } },
+  const { limit = 4, audience, sortby } = req.query;
+
+  const getQuizzesByAudience = async audience => {
+    const oprionsArr = [{ $match: { quizType: audience } }];
+
+    if (sortby === 'date') {
+      oprionsArr.push({ $sort: { createdAt: -1 } });
+      oprionsArr.push({ $limit: Number(limit) });
+    } else {
+      oprionsArr.push({ $sample: { size: Number(limit) } });
+    }
+
+    const resObj = await Promise.all([
+      Quiz.aggregate(oprionsArr),
+      Quiz.find({ quizType: audience }).count(),
     ]);
+    return { quizzes: resObj[0], totalCount: resObj[1] };
+  };
+
+  const result = {};
+
+  if (audience === undefined) {
+    const arrQuizzes = await Promise.all([
+      getQuizzesByAudience('adults'),
+      getQuizzesByAudience('children'),
+    ]);
+
+    result.adults = arrQuizzes[0];
+    result.children = arrQuizzes[1];
+  } else {
+    result[audience] = await getQuizzesByAudience(audience);
   }
-  res.status(201).json(result);
-  // !!!! Щоб повертало однакову к-сть по замовчуванню
+
+  res.json(result);
 };
+
 /* to quizzes controllers */
 const getPassedQuizzes = async (req, res) => {
   const { _id } = req.user;
