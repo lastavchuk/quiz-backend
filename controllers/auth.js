@@ -1,10 +1,6 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const path = require('path');
-const fs = require('fs/promises');
 const gravatar = require('gravatar');
-const jimp = require('jimp');
-
 const randomId = require('crypto').randomUUID;
 
 const User = require('../models/user');
@@ -86,37 +82,6 @@ const logout = async (req, res) => {
   res.status(204).json();
 };
 
-/* update this func */
-const updateAvatar = async (req, res) => {
-  await jimp
-    .read(req.file.path)
-    .then(image => {
-      return image.resize(250, 250).quality(75).writeAsync(req.file.path);
-    })
-    .catch(err => {
-      throw HttpError(400, err.message);
-    });
-
-  const newFileName = `${req.user._id}_${req.file.originalname}`;
-
-  // ===================================
-
-  const avatarPath = path.join(
-    __dirname,
-    '../',
-    'public',
-    'avatars',
-    newFileName
-  );
-
-  await fs.rename(req.file.path, avatarPath);
-
-  const userAvatar = path.join('avatars', newFileName);
-  await User.findByIdAndUpdate(req.user._id, { userAvatar });
-
-  res.json({ userAvatar });
-};
-
 const verifyEmail = async (req, res) => {
   const { verificationToken } = req.params;
 
@@ -155,7 +120,6 @@ module.exports = {
   login: ctrlWrapper(login),
   current: ctrlWrapper(current),
   logout: ctrlWrapper(logout),
-  updateAvatar: ctrlWrapper(updateAvatar),
   verifyEmail: ctrlWrapper(verifyEmail),
   resendVerifyToken: ctrlWrapper(resendVerifyToken),
 };
