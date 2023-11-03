@@ -155,27 +155,18 @@ const getAllQuizCreateUser = async (req, res) => {
 };
 // *****************************
 const patchOnePassed = async (req, res) => {
-  const quizId = req.params.quizId;
   const result = await Quiz.findOneAndUpdate(
-    {
-      _id: quizId,
-    },
-    {
-      $inc: { totalPassed: 1 },
-    },
-    {
-      returnDocument: 'after',
-    }
+    { _id: req.params.quizId },
+    { $inc: { totalPassed: 1 } },
+    { returnDocument: 'after' }
   );
   res.json(result);
 };
 // ****************************************
 
 const getOneQuiz = async (req, res) => {
-  const id = req.params.quizId;
-
   const result = await Question.find(
-    { quizId: id },
+    { quizId: req.params.quizId },
     'image question answers time'
   ).populate('quizId', 'quizName');
   res.json(result);
