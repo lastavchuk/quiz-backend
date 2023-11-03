@@ -33,7 +33,7 @@ router.get('/total', ctrl.getTotalAllQuizzes);
 router.get('/myquiz', authenticate, ctrl.getAllQuizCreateUser);
 router.get('/passedquiz', authenticate, ctrl.getPassedQuizzes);
 router.patch('/:quizId', authenticate, isValidQuizId, ctrl.patchOnePassed); // ???????
-router.get('/:quizId', authenticate, isValidQuizId, ctrl.getOneQuiz);
+router.get('/:quizId', isValidQuizId, ctrl.getOneQuiz);
 router.delete('/:quizId', authenticate, isValidQuizId, ctrl.deleteQuiz);
 
 module.exports = router;
