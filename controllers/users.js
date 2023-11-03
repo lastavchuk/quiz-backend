@@ -64,9 +64,13 @@ const updateUser = async (req, res) => {
   });
   await fs.unlink(req.file.path);
   // =================================
-  await User.findByIdAndUpdate(_id, { userAvatar: dataFile.url });
+  const result = await User.findByIdAndUpdate(
+    _id,
+    { userAvatar: dataFile.url },
+    { new: true, select: 'userAvatar' }
+  );
 
-  res.json('okey');
+  res.json(result);
 };
 
 const addPassedQuiz = async (req, res, next) => {
