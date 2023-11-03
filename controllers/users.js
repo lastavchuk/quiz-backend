@@ -11,9 +11,8 @@ const getAllFavorites = async (req, res, next) => {
     { _id: { $in: user.favorites } },
     '-createdAt -updatedAt'
   );
-  console.log('favoritesQuizes: ', favoritesQuizes);
 
-  res.json(favoritesQuizes);
+  res.json({ data: favoritesQuizes, totalFavorites: favoritesQuizes.length });
 };
 
 const updateFavorite = async (req, res, next) => {
