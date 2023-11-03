@@ -6,6 +6,7 @@ require('dotenv').config();
 const authRouter = require('./routes/api/auth');
 const categoriesRouter = require('./routes/api/categories');
 const quizzesRouter = require('./routes/api/quizzes');
+const questionsRouter = require('./routes/api/questions');
 const feedbackRouter = require('./routes/api/feedback');
 const usersRouter = require('./routes/api/users');
 
@@ -25,6 +26,7 @@ app.use('/api/users', usersRouter);
 app.use('/api/feedback', feedbackRouter);
 app.use('/api/categories', categoriesRouter);
 app.use('/api/quizzes', quizzesRouter);
+app.use('/api/questions', questionsRouter);
 
 const optionsSwagger = {
   definition: {
