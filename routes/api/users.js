@@ -21,7 +21,4 @@ router.patch(
   ctrl.addPassedQuiz
 );
 
-/* to delete */
-// router.get('/test', authenticate, ctrl.getPassedQuizzes);
-
 module.exports = router;

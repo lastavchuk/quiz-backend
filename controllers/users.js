@@ -11,9 +11,8 @@ const getAllFavorites = async (req, res, next) => {
     { _id: { $in: user.favorites } },
     '-createdAt -updatedAt'
   );
-  console.log('favoritesQuizes: ', favoritesQuizes);
 
-  res.json(favoritesQuizes);
+  res.json({ data: favoritesQuizes, totalFavorites: favoritesQuizes.length });
 };
 
 const updateFavorite = async (req, res, next) => {
@@ -44,12 +43,6 @@ const updateFavorite = async (req, res, next) => {
   return res.json({ userId: result._id, favorites: result.favorites });
 };
 
-/* req.body = {
-    "quizId": "653b7f41b96bb14670aac9ed",
-    "quantityQuestions": 10,
-    "correctAnswers": 5
-}  */
-
 const addPassedQuiz = async (req, res, next) => {
   const result = await User.findByIdAndUpdate(
     req.user._id,
@@ -63,7 +56,9 @@ const addPassedQuiz = async (req, res, next) => {
     { new: true, select: 'totalQuestions totalAnswers average passedQuizzes' }
   );
 
-  result.average = (result.totalAnswers / result.totalQuestions) * 100;
+  result.average = Math.round(
+    (result.totalAnswers / result.totalQuestions) * 100
+  );
 
   await result.save();
 
