@@ -167,7 +167,7 @@ const patchOnePassed = async (req, res) => {
 const getOneQuiz = async (req, res) => {
   const id = req.params.quizId;
 
-  const result = await Question.findOne(
+  const result = await Question.find(
     { quizId: id },
     'image question answers time'
   ).populate('quizId', 'quizName');
