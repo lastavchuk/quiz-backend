@@ -6,6 +6,7 @@ require('dotenv').config();
 const authRouter = require('./routes/api/auth');
 const categoriesRouter = require('./routes/api/categories');
 const quizzesRouter = require('./routes/api/quizzes');
+const questionsRouter = require('./routes/api/questions');
 const feedbackRouter = require('./routes/api/feedback');
 const usersRouter = require('./routes/api/users');
 
@@ -20,26 +21,12 @@ app.use(logger(formatsLogger));
 app.use(cors());
 app.use(express.json());
 
-app.use(
-  '/api/auth',
-  authRouter
-  // #swagger.tags = ['Auth']
-);
-app.use(
-  '/api/users',
-  usersRouter
-  // #swagger.tags = ['Users']
-);
+app.use('/api/auth', authRouter);
+app.use('/api/users', usersRouter);
 app.use('/api/feedback', feedbackRouter);
-app.use(
-  /*
-     #swagger.tags = ['Categories']
-     #swagger.security = [{ "apiKeyAuth": [] }] 
-    */
-  '/api/categories',
-  categoriesRouter
-);
+app.use('/api/categories', categoriesRouter);
 app.use('/api/quizzes', quizzesRouter);
+app.use('/api/questions', questionsRouter);
 
 const optionsSwagger = {
   definition: {
@@ -68,7 +55,6 @@ const optionsSwagger = {
 };
 const swaggerSpecs = swaggerJsdoc(optionsSwagger);
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
-// app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use((req, res) => {
   res.status(404).json({ message: 'Route not found' });
