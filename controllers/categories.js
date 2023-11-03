@@ -7,13 +7,17 @@ const getCategories = async (req, res) => {
   const resCategories = {};
 
   if (audience === undefined) {
-    resCategories.adults = await findAndSort('adults');
-    resCategories.children = await findAndSort('children');
+    const resArr = await Promise.all([
+      findAndSort('adults'),
+      findAndSort('children'),
+    ]);
+    resCategories.adults = resArr[0];
+    resCategories.children = resArr[1];
   } else {
     resCategories[audience] = await findAndSort(audience);
   }
 
-  res.status(200).json(resCategories);
+  res.json(resCategories);
 };
 
 const addCategory = async (req, res) => {
