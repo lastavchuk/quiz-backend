@@ -60,18 +60,19 @@ const login = async (req, res) => {
   const payload = { id: user._id };
   const token = jwt.sign(payload, SECRET_KEY, { expiresIn: '2d' });
 
-  await User.findByIdAndUpdate(user._id, { token });
-
-  res.json({
-    token,
-    user: {
-      name: user.name,
-      email: user.email,
-      average: user.average,
-      userAvatar: user.userAvatar,
-      passedQuizzes: user.passedQuizzes,
+  const result = await User.findByIdAndUpdate(
+    user._id,
+    {
+      token,
     },
-  });
+    {
+      new: true,
+      select:
+        '-password -totalQuestions -totalAnswers -verify -verificationToken -createdAt -updatedAt',
+    }
+  );
+
+  res.json(result);
 };
 
 const current = async (req, res) => {
