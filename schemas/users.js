@@ -33,9 +33,16 @@ const updateUserPassedQuizzesSchema = Joi.object({
     }),
 });
 
+const updateUserSchema = Joi.object({
+  name: Joi.string().messages({
+    'any.required': errMsg.errFieldIsrequired('quantityQuestions field'),
+  }),
+});
+
 const schemas = {
   updateFavoritesSchema,
   updateUserPassedQuizzesSchema,
+  updateUserSchema,
 };
 
 module.exports = schemas;
