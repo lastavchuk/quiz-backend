@@ -10,6 +10,8 @@ const questionsRouter = require('./routes/api/questions');
 const feedbackRouter = require('./routes/api/feedback');
 const usersRouter = require('./routes/api/users');
 
+const { optionsSwagger } = require('./constants/swagger');
+
 const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 
@@ -28,31 +30,6 @@ app.use('/api/categories', categoriesRouter);
 app.use('/api/quizzes', quizzesRouter);
 app.use('/api/questions', questionsRouter);
 
-const optionsSwagger = {
-  definition: {
-    openapi: '3.1.0',
-    info: {
-      title: 'QuizMaster API',
-      version: '1.0.0',
-      description: 'Here will be a description!!!!',
-      license: {
-        name: 'MIT',
-        url: 'https://spdx.org/licenses/MIT.html',
-      },
-      contact: {
-        name: 'Quiz',
-        url: 'test.com',
-        email: 'test@email.com',
-      },
-    },
-    servers: [
-      {
-        url: process.env.BASE_URL,
-      },
-    ],
-  },
-  apis: ['./routes/api/*.js'],
-};
 const swaggerSpecs = swaggerJsdoc(optionsSwagger);
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
 
