@@ -155,27 +155,18 @@ const getAllQuizCreateUser = async (req, res) => {
 };
 // *****************************
 const patchOnePassed = async (req, res) => {
-  const quizId = req.params.quizId;
   const result = await Quiz.findOneAndUpdate(
-    {
-      _id: quizId,
-    },
-    {
-      $inc: { totalPassed: 1 },
-    },
-    {
-      returnDocument: 'after',
-    }
+    { _id: req.params.quizId },
+    { $inc: { totalPassed: 1 } },
+    { returnDocument: 'after' }
   );
   res.json(result);
 };
 // ****************************************
 
 const getOneQuiz = async (req, res) => {
-  const id = req.params.quizId;
-
   const result = await Question.find(
-    { quizId: id },
+    { quizId: req.params.quizId },
     'image question answers time'
   ).populate('quizId', 'quizName');
   res.json(result);
@@ -281,6 +272,10 @@ const getRandomQuizzes = async (req, res) => {
 
 /* to quizzes controllers */
 const getPassedQuizzes = async (req, res) => {
+  const { page = 1, limit = 6 } = req.query;
+
+  const skip = (page - 1) * limit;
+  const options = { skip, limit };
   const { _id } = req.user;
 
   const { passedQuizzes } = await User.findOne(_id);
@@ -292,7 +287,7 @@ const getPassedQuizzes = async (req, res) => {
   if (passedQuizzes.length === 0) {
     return res.json([]);
   }
-  const result = await Quiz.find({ _id: { $in: idArray } })
+  const result = await Quiz.find({ _id: { $in: idArray } }, '', options)
     .populate('quizCategory', '-_id categoryName')
     .sort('-createdAt');
 

@@ -54,7 +54,7 @@ const questionSchemaMongoose = new Schema(
     quizId: {
       type: Schema.Types.ObjectId,
       ref: 'quiz',
-      required: [true, errMsg.errFieldIsrequired('Quiz id2')],
+      required: [true, errMsg.errFieldIsrequired('Quiz id')],
     },
   },
   { versionKey: false }

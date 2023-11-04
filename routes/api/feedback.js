@@ -102,25 +102,24 @@ const { validateBody, authenticate } = require('../../middlewares');
  *               $ref: '#/components/schemas/Feedback'
  */
 
-// Public route
+// ===== PUBLIC routes =====
 // Get all feedbacks
 router.get('/', ctrl.getAllFeedbacks);
 
-// Private route
-// Add feedback about the application
+// Add feedback about quiz
+router.post(
+  '/:quizId',
+  validateBody(schemas.feedbackSchemaJoi),
+  ctrl.addFeedbackQuizId
+);
+
+//===== PRIVATE routes =====
+// Add feedback about application
 router.post(
   '/',
   authenticate,
   validateBody(schemas.feedbackSchemaJoi),
   ctrl.addFeedback
-);
-
-// Public route
-// Add feedback about the quiz
-router.post(
-  '/:quizId',
-  validateBody(schemas.feedbackSchemaJoi),
-  ctrl.addFeedbackQuizId
 );
 
 module.exports = router;

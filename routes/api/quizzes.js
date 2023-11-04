@@ -9,6 +9,18 @@ const {
   upload,
 } = require('../../middlewares');
 
+// ===== PUBLIC routes =====
+// Get random or sorted quizzes
+router.get('/random', ctrl.getRandomQuizzes);
+
+// The total number of people who passed all quizzes
+router.get('/total', ctrl.getTotalAllQuizzes);
+
+//===== PRIVATE routes =====
+// get all and filter quizzes
+router.get('/', authenticate, ctrl.getSearchQuiz);
+
+// Add new quiz
 router.post(
   '/',
   authenticate,
@@ -16,6 +28,13 @@ router.post(
   ctrl.addQuiz
 );
 
+// Get all quizzes created by the user
+router.get('/myquiz', authenticate, ctrl.getAllQuizCreateUser);
+
+// Get last tests that the user has passed
+router.get('/passedquiz', authenticate, ctrl.getPassedQuizzes);
+
+// Update quiz from quizId
 router.put(
   '/:quizId',
   authenticate,
@@ -24,16 +43,14 @@ router.put(
   ctrl.updateQuiz
 );
 
-// get all and filter quizzes
-router.get('/', authenticate, ctrl.getSearchQuiz);
+// Increase the counter of passed quizzes by 1
+router.patch('/:quizId', authenticate, isValidQuizId, ctrl.patchOnePassed);
 
-// get random quiz
-router.get('/random', ctrl.getRandomQuizzes);
-router.get('/total', ctrl.getTotalAllQuizzes);
-router.get('/myquiz', authenticate, ctrl.getAllQuizCreateUser);
-router.get('/passedquiz', authenticate, ctrl.getPassedQuizzes);
-router.patch('/:quizId', authenticate, isValidQuizId, ctrl.patchOnePassed); // ???????
-router.get('/:quizId', authenticate, isValidQuizId, ctrl.getOneQuiz);
+// Delete quiz from quizId
 router.delete('/:quizId', authenticate, isValidQuizId, ctrl.deleteQuiz);
+
+// ===== PUBLIC route =====
+// Get quiz with quizId
+router.get('/:quizId', isValidQuizId, ctrl.getOneQuiz);
 
 module.exports = router;
