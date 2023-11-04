@@ -3,7 +3,7 @@ const router = express.Router();
 
 const ctrl = require('../../controllers/users');
 const schemas = require('../../schemas/users');
-const { validateBody, authenticate } = require('../../middlewares');
+const { validateBody, authenticate, upload } = require('../../middlewares');
 
 router.get('/favorites', authenticate, ctrl.getAllFavorites);
 
@@ -19,6 +19,13 @@ router.patch(
   authenticate,
   validateBody(schemas.updateUserPassedQuizzesSchema),
   ctrl.addPassedQuiz
+);
+
+router.patch(
+  '/update-user',
+  authenticate,
+  upload.single('avatar'),
+  ctrl.updateUser
 );
 
 module.exports = router;
