@@ -49,26 +49,36 @@ const updateFavorite = async (req, res, next) => {
 const updateUser = async (req, res) => {
   const { _id } = req.user;
 
-  // ================ update Avatar ===========
-  await jimp
-    .read(req.file.path)
-    .then(image => {
-      return image.resize(100, 100).quality(80).writeAsync(req.file.path);
-    })
-    .catch(err => {
-      throw HttpError(400, err.message);
-    });
+  const updateFields = {};
 
-  const dataFile = await cloudinary.uploader.upload(req.file.path, {
-    folder: 'quize-user-avatars',
+  if (req.file) {
+    await jimp
+      .read(req.file.path)
+      .then(image => {
+        return image.resize(100, 100).quality(80).writeAsync(req.file.path);
+      })
+      .catch(err => {
+        throw HttpError(400, err.message);
+      });
+    const { url } = await cloudinary.uploader.upload(req.file.path, {
+      folder: 'quize-user-avatars',
+    });
+    await fs.unlink(req.file.path);
+    updateFields.userAvatar = url;
+    if (req.body)
+      for (const key in req.body) {
+        updateFields[key] = req.body[key];
+      }
+  } else {
+    for (const key in req.body) {
+      updateFields[key] = req.body[key];
+    }
+  }
+
+  const result = await User.findByIdAndUpdate(_id, updateFields, {
+    new: true,
+    select: 'userAvatar name email',
   });
-  await fs.unlink(req.file.path);
-  // =================================
-  const result = await User.findByIdAndUpdate(
-    _id,
-    { userAvatar: dataFile.url },
-    { new: true, select: 'userAvatar' }
-  );
 
   res.json(result);
 };
