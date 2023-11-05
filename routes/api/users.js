@@ -22,6 +22,13 @@ router.patch(
 );
 
 router.patch(
+  '/retake-passed-quiz',
+  authenticate,
+  validateBody(schemas.updateUserPassedQuizzesSchema),
+  ctrl.updatePassedQuiz
+);
+
+router.patch(
   '/update-user',
   authenticate,
   upload.single('avatar'),

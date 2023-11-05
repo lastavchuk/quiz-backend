@@ -14,8 +14,8 @@ const updateUserPassedQuizzesSchema = Joi.object({
   quizId: Joi.string()
     .required()
     .messages({
-      'string.empty': errMsg.errFieldIsrequired('favorites field'),
-      'any.required': errMsg.errFieldIsrequired('favorites field'),
+      'string.empty': errMsg.errFieldIsrequired('quizId field'),
+      'any.required': errMsg.errFieldIsrequired('quizId field'),
     }),
   quantityQuestions: Joi.number()
     .min(1)

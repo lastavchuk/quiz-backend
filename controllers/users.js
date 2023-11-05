@@ -84,6 +84,16 @@ const updateUser = async (req, res) => {
 };
 
 const addPassedQuiz = async (req, res, next) => {
+  const { passedQuizzes } = await User.findById(req.user._id);
+  const isPassedQuiz = passedQuizzes.find(
+    quiz => quiz.quizId === req.body.quizId
+  );
+  if (isPassedQuiz) {
+    throw HttpError(
+      409,
+      `Quize ${req.body.quizId} is alredy in the passed quizzes`
+    );
+  }
   const result = await User.findByIdAndUpdate(
     req.user._id,
     {
@@ -93,16 +103,52 @@ const addPassedQuiz = async (req, res, next) => {
         totalAnswers: req.body.correctAnswers,
       },
     },
-    { new: true, select: 'totalQuestions totalAnswers average passedQuizzes' }
+    { new: true, select: 'totalAnswers totalQuestions average passedQuizzes' }
   );
 
   result.average = Math.round(
     (result.totalAnswers / result.totalQuestions) * 100
   );
+  await result.save();
+
+  res.json(result);
+};
+
+const updatePassedQuiz = async (req, res, next) => {
+  const { passedQuizzes } = await User.findOne(req.user._id);
+
+  const quiz = passedQuizzes.find(item => item.quizId === req.body.quizId);
+
+  if (!quiz) {
+    throw HttpError(
+      404,
+      `Quize ${req.body.quizId} not found in passed quizzes`
+    );
+  }
+
+  const query = { _id: req.user._id, 'passedQuizzes.quizId': req.body.quizId };
+  const update = {
+    $set: {
+      'passedQuizzes.$.quantityQuestions': req.body.quantityQuestions,
+      'passedQuizzes.$.correctAnswers': req.body.correctAnswers,
+    },
+    $inc: {
+      totalQuestions: req.body.quantityQuestions,
+      totalAnswers: req.body.correctAnswers,
+    },
+  };
+  const result = await User.findOneAndUpdate(query, update, {
+    new: true,
+    select: 'average passedQuizzes totalAnswers totalQuestions',
+  });
+
+  result.average = Math.round(
+    (Number(result.totalAnswers) / Number(result.totalQuestions)) * 100
+  );
 
   await result.save();
 
-  return res.json(result);
+  res.json(result);
 };
 
 module.exports = {
@@ -110,4 +156,5 @@ module.exports = {
   getAllFavorites: ctrlWrapper(getAllFavorites),
   addPassedQuiz: ctrlWrapper(addPassedQuiz),
   updateUser: ctrlWrapper(updateUser),
+  updatePassedQuiz: ctrlWrapper(updatePassedQuiz),
 };
