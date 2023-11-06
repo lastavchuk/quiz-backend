@@ -1,32 +1,44 @@
 const fs = require('fs/promises');
 const jimp = require('jimp');
+const { isValidObjectId } = require('mongoose');
 
 const User = require('../models/user');
 const Quiz = require('../models/quiz');
 const { ctrlWrapper, HttpError, cloudinary } = require('../helpers');
 
 const getAllFavorites = async (req, res, next) => {
+  const { page = 1, limit = 8 } = req.query;
+
+  const skip = (page - 1) * limit;
+  const options = { skip, limit };
+
   const user = await User.findById(req.user._id).select('favorites');
+  console.log('user: ', user);
   if (!user) {
     throw HttpError(404);
   }
-  const favoritesQuizes = await Quiz.find(
-    { _id: { $in: user.favorites } },
-    '-createdAt -updatedAt'
-  );
 
-  res.json({ data: favoritesQuizes, totalFavorites: favoritesQuizes.length });
+  const resultObj = await Promise.all([
+    Quiz.find(
+      { _id: { $in: user.favorites } },
+      '-createdAt -updatedAt',
+      options
+    ),
+    Quiz.find({ _id: { $in: user.favorites } }).count(),
+  ]);
+
+  res.json({ data: resultObj[0], totalFavorites: resultObj[1] });
 };
 
 const updateFavorite = async (req, res, next) => {
   const quizId = req.body.favorites;
   let result = {};
-  /* add id validation */
+  if (!isValidObjectId(quizId)) {
+    throw HttpError(400, `QuizId ${quizId} is not valid`);
+  }
+
   const user = await User.findById(req.user._id).select('favorites');
 
-  if (!user) {
-    throw HttpError(404);
-  }
   if (user.favorites.length === 0 || !user.favorites.includes(quizId)) {
     result = await User.findByIdAndUpdate(
       req.user._id,
@@ -41,9 +53,11 @@ const updateFavorite = async (req, res, next) => {
     );
   }
 
-  //   console.log("result: ", result.favorites);
-
-  return res.json({ userId: result._id, favorites: result.favorites });
+  return res.json({
+    userId: result._id,
+    favorites: result.favorites,
+    totalFavorites: result.favorites.length,
+  });
 };
 
 const updateUser = async (req, res) => {
