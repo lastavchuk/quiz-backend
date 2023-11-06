@@ -30,6 +30,7 @@ const questionSchemaMongoose = new Schema(
     },
     time: {
       type: Number,
+      min: [1, errMsg.errFieldMin('Time', 1)],
       required: [true, errMsg.errFieldIsrequired('Question time')],
     },
     image: {
@@ -39,7 +40,6 @@ const questionSchemaMongoose = new Schema(
       type: String,
       enum: constants.questionBg,
       default: constants.questionBg[0],
-      required: [true, errMsg.errFieldIsrequired('Answer background')],
     },
     question: {
       type: String,

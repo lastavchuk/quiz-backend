@@ -19,7 +19,9 @@ const feedbackSchemaMongoose = new Schema(
     },
     rate: {
       type: Number,
-      required: [true, errMsg.errFieldIsrequired('Vote')],
+      min: [0, errMsg.errFieldMin('Rate', 0)],
+      max: [5, errMsg.errFieldMax('Rate', 5)],
+      required: [true, errMsg.errFieldIsrequired('Rate')],
     },
     comment: {
       type: String,

@@ -18,8 +18,8 @@ const updateUserPassedQuizzesSchema = Joi.object({
       'any.required': errMsg.errFieldIsrequired('quizId field'),
     }),
   quantityQuestions: Joi.number()
-    .min(1)
     .integer()
+    .min(1)
     .required()
     .messages({
       'any.required': errMsg.errFieldIsrequired('quantityQuestions field'),
