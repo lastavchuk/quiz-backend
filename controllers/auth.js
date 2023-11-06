@@ -13,10 +13,10 @@ const { SECRET_KEY } = process.env;
 const register = async (req, res) => {
   const hashPass = await bcrypt.hash(req.body.password, 10);
 
-  const userAvatar = gravatar.url(req.body.email, {
-    protocol: 'https',
-    s: '100',
-  });
+  // const userAvatar = gravatar.url(req.body.email, {
+  //   protocol: 'https',
+  //   s: '100',
+  // });
 
   // "https://gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50";
 
@@ -25,7 +25,7 @@ const register = async (req, res) => {
   const result = await User.create({
     ...req.body,
     password: hashPass,
-    userAvatar,
+    // userAvatar,
     verificationToken,
   });
 
