@@ -1,5 +1,5 @@
 {
-  "openapi": "3.0.1",
+  "openapi": "3.0.3",
   "info": {
     "title": "QuizMaster API",
     "version": "1.0.0",
@@ -16,7 +16,7 @@
   },
   "servers": [
     {
-      "url": "https://quiz-backend-vq56.onrender.com"
+      "url": "https://quiz-backend-vq56.onrender.com/api"
     },
     {
       "url": "http://localhost:3000/api"
@@ -41,7 +41,11 @@
     },
     {
       "name": "Quizzes",
-      "description": "Quizzes category endpoints"
+      "description": "Quizzes endpoints"
+    },
+    {
+      "name": "Questions",
+      "description": "Questions endpoints"
     }
   ],
   "paths": {
@@ -125,13 +129,7 @@
       "post": {
         "tags": ["Auth"],
         "summary": "User logout",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "Authorization",
-            "required": true
-          }
-        ],
+        "parameters": [],
         "security": [{ "Bearer": [] }],
         "responses": {
           "204": {
@@ -195,13 +193,7 @@
       "patch": {
         "tags": ["Users"],
         "summary": "Updates user`s avatar",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "Authorization",
-            "required": true
-          }
-        ],
+        "parameters": [],
         "security": [{ "Bearer": [] }],
         "requestBody": {
           "description": "New user`s avatar file",
@@ -243,13 +235,7 @@
       "patch": {
         "tags": ["Users"],
         "summary": "Creates user`s quizzes",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "Authorization",
-            "required": true
-          }
-        ],
+        "parameters": [],
         "security": [{ "Bearer": [] }],
         "requestBody": {
           "description": "Completed quiz that was passed by the user",
@@ -295,13 +281,7 @@
       "patch": {
         "tags": ["Users"],
         "summary": "Adding a quiz to favorites",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "Authorization",
-            "required": true
-          }
-        ],
+        "parameters": [],
         "security": [{ "Bearer": [] }],
         "requestBody": {
           "description": "User Favorites Object",
@@ -341,13 +321,7 @@
       "get": {
         "tags": ["Users"],
         "summary": "User Favorites Object",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "Authorization",
-            "required": true
-          }
-        ],
+        "parameters": [],
         "security": [{ "Bearer": [] }],
         "responses": {
           "200": {
@@ -379,13 +353,7 @@
       "post": {
         "tags": ["Feedback"],
         "summary": "Adding feedback",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "Authorization",
-            "required": true
-          }
-        ],
+        "parameters": [],
         "security": [{ "Bearer": [] }],
         "requestBody": {
           "description": "User Feedback Object",
@@ -487,13 +455,7 @@
       "post": {
         "tags": ["Categories"],
         "summary": "The categories managing API",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "Authorization",
-            "required": true
-          }
-        ],
+        "parameters": [],
         "security": [{ "Bearer": [] }],
         "requestBody": {
           "description": "User categories Object",
@@ -533,13 +495,7 @@
       "get": {
         "tags": ["Categories"],
         "summary": "Categories Object",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "Authorization",
-            "required": true
-          }
-        ],
+        "parameters": [],
         "security": [{ "Bearer": [] }],
         "responses": {
           "200": {
@@ -655,11 +611,6 @@
         "summary": "Update quiz from quizId",
         "parameters": [
           {
-            "in": "header",
-            "name": "Authorization",
-            "required": true
-          },
-          {
             "in": "path",
             "name": "idQuiz",
             "required": true
@@ -702,11 +653,6 @@
         "summary": "Delete quiz from quizId",
         "parameters": [
           {
-            "in": "header",
-            "name": "Authorization",
-            "required": true
-          },
-          {
             "in": "path",
             "name": "idQuiz",
             "required": true
@@ -741,13 +687,7 @@
       "get": {
         "tags": ["Quizzes"],
         "summary": "Get all quizzes created by the user",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "Authorization",
-            "required": true
-          }
-        ],
+        "parameters": [],
         "security": [{ "Bearer": [] }],
         "responses": {
           "200": {
@@ -767,13 +707,7 @@
       "get": {
         "tags": ["Quizzes"],
         "summary": "Get last tests that the user has passed",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "Authorization",
-            "required": true
-          }
-        ],
+        "parameters": [],
         "security": [{ "Bearer": [] }],
         "responses": {
           "200": {
@@ -794,11 +728,6 @@
         "tags": ["Quizzes"],
         "summary": "Get all and filter quizzes",
         "parameters": [
-          {
-            "in": "header",
-            "name": "Authorization",
-            "required": true
-          },
           {
             "in": "query",
             "name": "q"
@@ -846,13 +775,7 @@
       "post": {
         "tags": ["Quizzes"],
         "summary": "Add new quiz",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "Authorization",
-            "required": true
-          }
-        ],
+        "parameters": [],
         "security": [{ "Bearer": [] }],
         "requestBody": {
           "description": "User quiz Object",
@@ -887,6 +810,151 @@
             "description": "Invalid user / Invalid session",
             "content": {}
           }
+        }
+      }
+    },
+
+    "/questions/{quizId}": {
+      "post": {
+        "tags": ["Questions"],
+        "summary": "Add new question to quiz with quizId",
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "quizId",
+            "required": true,
+            "description": "The ID of the quiz to which the question refers",
+            "schema": {
+              "type": "string",
+              "example": "653b7e7fb96bb14670aac9e6"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Question object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/examples/QuestionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successfull operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/examples/Question"
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/ValidateError" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/questions/{questionId}": {
+      "get": {
+        "tags": ["Questions"],
+        "summary": "Get question from questionId",
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "questionId",
+            "required": true,
+            "description": "Question ID",
+            "schema": {
+              "type": "string",
+              "example": "653b7f41b96bb14670aac9ed"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfull operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/examples/Question"
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/ValidateError" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      },
+      "put": {
+        "tags": ["Questions"],
+        "summary": "Update question from questionId",
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "questionId",
+            "required": true,
+            "description": "Question ID",
+            "schema": {
+              "type": "string",
+              "example": "653b7e7fb96bb14670aac9e6"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Question object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/examples/QuestionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successfull operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/examples/Question"
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/ValidateError" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      },
+      "delete": {
+        "tags": ["Questions"],
+        "summary": "Delete question from questionId",
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "questionId",
+            "required": true,
+            "description": "Question ID",
+            "schema": {
+              "type": "string",
+              "example": "653b7f41b96bb14670aac9ed"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Question deleted!",
+            "content": {}
+          },
+          "400": { "$ref": "#/components/responses/ValidateError" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
         }
       }
     }
@@ -1466,6 +1534,34 @@
       "AddOnePassed": {
         "type": "object",
         "$ref": "#/components/examples/Quize"
+      },
+      "Question": {
+        "type": "object",
+        "required": ["quizId", "type", "time", "question", "answers"],
+        "properties": {
+          "_id": { "$ref": "#/components/examples/id" },
+          "quizId": {
+            "$ref": "#/components/examples/Question/properties/quizId"
+          },
+          "type": {
+            "$ref": "#/components/examples/Question/properties/type"
+          },
+          "time": {
+            "$ref": "#/components/examples/Question/properties/time"
+          },
+          "image": {
+            "$ref": "#/components/examples/Question/properties/image"
+          },
+          "background": {
+            "$ref": "#/components/examples/Question/properties/background"
+          },
+          "question": {
+            "$ref": "#/components/examples/Question/properties/question"
+          },
+          "answers": {
+            "$ref": "#/components/examples/Question/properties/answers"
+          }
+        }
       }
     },
     "securitySchemes": {
@@ -1475,7 +1571,22 @@
         "bearerFormat": "JWT"
       }
     },
+    "responses": {
+      "Unauthorized": {
+        "description": "Not authorized (invalid access token)",
+        "content": {}
+      },
+      "ValidateError": {
+        "description": "Validation error",
+        "content": {}
+      }
+    },
     "examples": {
+      "id": {
+        "type": "string",
+        "description": "The auto-generated id",
+        "example": "6522bf1f9027bb7d55d6512b"
+      },
       "CategoriesSchema": {
         "type": "object",
         "properties": {
@@ -1790,6 +1901,102 @@
             "type": "string",
             "format": "data-time",
             "example": "2023-11-04T19:03:30.046Z"
+          }
+        }
+      },
+      "Question": {
+        "type": "object",
+        "required": ["type", "time", "question", "answers"],
+        "properties": {
+          "_id": { "$ref": "#/components/examples/id" },
+          "quizId": {
+            "type": "string",
+            "example": "653b7ab5f18b4cc7fb04f0a2",
+            "description": "The ID of the quiz to which the question refers"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["quiz", "true or false"],
+            "example": "quiz",
+            "description": "Question type"
+          },
+          "time": {
+            "type": "number",
+            "example": 90,
+            "description": "Time for an answer",
+            "minimum": 1
+          },
+          "image": {
+            "type": "string",
+            "example": "https://i.infocar.ua/i/2/6049/115206/1400x.jpg",
+            "description": "Image link to the question"
+          },
+          "background": {
+            "type": "string",
+            "enum": [
+              "rgba(255, 255, 255, 0.02)",
+              "#43A8D3",
+              "#6636C5",
+              "#E65368"
+            ],
+            "example": "rgba(255, 255, 255, 0.02)",
+            "description": "Question background color"
+          },
+          "question": {
+            "type": "string",
+            "example": "What car is shown in the picture?",
+            "description": "Question text",
+            "minLength": 3,
+            "maxLength": 50
+          },
+          "answers": {
+            "type": "array",
+            "example": [
+              { "answer": "Renault Sandero", "correctAnswer": false },
+              { "answer": "Volkswagen Golf", "correctAnswer": true },
+              { "answer": "Skoda Scala", "correctAnswer": false },
+              { "answer": "Hyundai i30", "correctAnswer": false }
+            ],
+            "description": "List of answer options",
+            "items": {
+              "type": "object",
+              "properties": {
+                "answer": {
+                  "type": "string",
+                  "example": "Volkswagen Golf",
+                  "description": "Answer text"
+                },
+                "correctAnswer": {
+                  "type": "boolean",
+                  "example": false,
+                  "description": "True or false answer"
+                }
+              }
+            }
+          }
+        }
+      },
+      "QuestionRequest": {
+        "type": "object",
+        "required": ["type", "time", "question", "answers"],
+        "properties": {
+          "type": {
+            "$ref": "#/components/examples/Question/properties/type"
+          },
+          "time": {
+            "$ref": "#/components/examples/Question/properties/time"
+          },
+          "image": {
+            "$ref": "#/components/examples/Question/properties/image"
+          },
+          "background": {
+            "$ref": "#/components/examples/Question/properties/background"
+          },
+          "question": {
+            "$ref": "#/components/examples/Question/properties/question"
+          },
+          "answers": {
+            "$ref": "#/components/examples/Question/properties/answers"
           }
         }
       }
