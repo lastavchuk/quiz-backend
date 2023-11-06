@@ -41,7 +41,7 @@ const userSchemaMongoose = new Schema(
     },
     userAvatar: {
       type: String,
-      required: [true, errMsg.errFieldIsrequired('Avatar image')],
+      default: '',
     },
     passedQuizzes: {
       type: [passedQuizSchema],

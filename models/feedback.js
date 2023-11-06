@@ -11,7 +11,6 @@ const feedbackSchemaMongoose = new Schema(
       type: String,
       minlength: [3, errMsg.errFieldMinLength('User Name', 3)],
       maxlength: [50, errMsg.errFieldMaxLength('User Name', 50)],
-      required: [true, errMsg.errFieldIsrequired('User Name')],
     },
     userAvatar: {
       type: String,
@@ -19,13 +18,14 @@ const feedbackSchemaMongoose = new Schema(
     },
     rate: {
       type: Number,
-      required: [true, errMsg.errFieldIsrequired('Vote')],
+      min: [0, errMsg.errFieldMin('Rate', 0)],
+      max: [5, errMsg.errFieldMax('Rate', 5)],
+      required: [true, errMsg.errFieldIsrequired('Rate')],
     },
     comment: {
       type: String,
       minlength: [8, errMsg.errFieldMinLength('User Name', 8)],
       maxlength: [500, errMsg.errFieldMaxLength('User Name', 500)],
-      required: [true, errMsg.errFieldIsrequired('Comment')],
     },
   },
   { versionKey: false, timestamps: true }
