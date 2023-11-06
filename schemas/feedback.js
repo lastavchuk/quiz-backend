@@ -19,9 +19,9 @@ const feedbackSchemaJoi = Joi.object({
     .max(5)
     .required()
     .messages({
-      'number.min': errMsg.errFieldMin('Vote', 0),
-      'number.max': errMsg.errFieldMax('Vote', 5),
-      'any.required': errMsg.errFieldIsrequired('Vote'),
+      'number.min': errMsg.errFieldMin('Rate', 0),
+      'number.max': errMsg.errFieldMax('Rate', 5),
+      'any.required': errMsg.errFieldIsrequired('Rate'),
     }),
   comment: Joi.string()
     .min(8)

@@ -1,9 +1,9 @@
 const HttpError = require('../helpers/HttpError');
 const isEmptyObj = require('../helpers/isEmptyObj');
 
-const validateBody = (schema, isFavorite = false) => {
+const validateBody = schema => {
   const func = (req, res, next) => {
-    if (!isEmptyObj(req.body)) {
+    if (!isEmptyObj(req.body) || req.file) {
       const { error } = schema.validate(req.body);
       if (error) {
         next(
@@ -16,12 +16,7 @@ const validateBody = (schema, isFavorite = false) => {
       }
       next();
     } else {
-      next(
-        HttpError(
-          400,
-          !isFavorite ? 'Missing fields' : 'Missing field favorite'
-        )
-      );
+      next(HttpError(400, 'Missing fields'));
     }
   };
   return func;

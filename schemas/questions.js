@@ -29,25 +29,15 @@ const addQuestionObj = {
       'any.required': errMsg.errFieldIsrequired('Question type'),
     }),
   time: Joi.number()
+    .integer()
     .min(1)
     .required()
     .messages({
       'number.min': errMsg.errFieldMin('Time', 1),
       'any.required': errMsg.errFieldIsrequired('Time'),
     }),
-  image: Joi.string()
-    .required()
-    .messages({
-      'string.empty': errMsg.errFieldIsrequired('Image'),
-      'any.required': errMsg.errFieldIsrequired('Image'),
-    }),
-  background: Joi.string()
-    .valid(...conctants.questionBg)
-    .required()
-    .messages({
-      'string.empty': errMsg.errFieldIsrequired('Background'),
-      'any.required': errMsg.errFieldIsrequired('Background'),
-    }),
+  image: Joi.string(),
+  background: Joi.string().valid(...conctants.questionBg),
   question: Joi.string()
     .min(3)
     .max(50)
@@ -79,12 +69,6 @@ const addQuestionObj = {
 
 const updateQuestionObj = {
   ...addQuestionObj,
-  _id: Joi.string()
-    .required()
-    .messages({
-      'string.empty': errMsg.errFieldIsrequired('Question id'),
-      'any.required': errMsg.errFieldIsrequired('Question id'),
-    }),
   quizId: Joi.string()
     .required()
     .messages({
