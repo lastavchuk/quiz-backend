@@ -1,0 +1,1795 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "QuizMaster API",
+    "version": "1.0.0",
+    "description": "API documentation for project QuizMaster",
+    "license": {
+      "name": "MIT",
+      "url": "https://spdx.org/licenses/MIT.html"
+    },
+    "contact": {
+      "name": "Quiz",
+      "url": "http://quiz-master.com",
+      "email": "quiz-backend@ukr.net"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000/api"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Auth",
+      "description": "Authorization endpoints"
+    },
+    {
+      "name": "Users",
+      "description": "User endpoints"
+    },
+    {
+      "name": "Feedback",
+      "description": "Feedback endpoints"
+    },
+    {
+      "name": "Categories",
+      "description": "Categories endpoints"
+    },
+    {
+      "name": "Quizzes",
+      "description": "Quizzes category endpoints"
+    }
+  ],
+  "paths": {
+    "/auth/register": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "User registration",
+        "parameters": [],
+        "requestBody": {
+          "description": "Registration's object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegistrationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successfull operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegistrationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request (invalid request body)",
+            "content": {}
+          },
+          "409": {
+            "description": "Provided email already exists",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "User login",
+        "parameters": [],
+        "requestBody": {
+          "description": "Login object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request (invalid request body)",
+            "content": {}
+          },
+          "403": {
+            "description": "Email doesn't exist / Password is wrong",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "User logout",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "204": {
+            "description": "Successful operation",
+            "content": {}
+          },
+          "400": {
+            "description": "No token provided",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized (invalid access token)",
+            "content": {}
+          },
+          "404": {
+            "description": "Invalid user / Invalid session",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/auth/current": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Gets about user info",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetUserCurrentResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "No token provided",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized (invalid access token)",
+            "content": {}
+          },
+          "404": {
+            "description": "Invalid user / Invalid session",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/users/update-user": {
+      "patch": {
+        "tags": ["Users"],
+        "summary": "Updates user`s avatar",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "New user`s avatar file",
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAvatarRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateAvatarResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "No token provided / Bad request (invalid request body)",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized (invalid access token)",
+            "content": {}
+          },
+          "404": {
+            "description": "Invalid user / Invalid session",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/users/passed-quiz": {
+      "patch": {
+        "tags": ["Users"],
+        "summary": "Creates user`s quizzes",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "Completed quiz that was passed by the user",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddPassedQuizRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddPassedQuizResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request (invalid request body)",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized (invalid access token)",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {}
+          },
+          "404": {
+            "description": "Invalid user / Invalid session",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/users/favorites": {
+      "patch": {
+        "tags": ["Users"],
+        "summary": "Adding a quiz to favorites",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "User Favorites Object",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddFavoriteRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successfull operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddFavoriteResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "No token provided / Bad request (invalid request body) / Category already exists",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized (invalid access token)",
+            "content": {}
+          },
+          "404": {
+            "description": "Invalid user / Invalid session",
+            "content": {}
+          }
+        }
+      },
+      "get": {
+        "tags": ["Users"],
+        "summary": "User Favorites Object",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "Successfull operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetFavoriteRequest"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "No token provided / Bad request (invalid request body) / Category already exists",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized (invalid access token)",
+            "content": {}
+          },
+          "404": {
+            "description": "Invalid user / Invalid session",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/feedback": {
+      "post": {
+        "tags": ["Feedback"],
+        "summary": "Adding feedback",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "User Feedback Object",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddFeedbackAppRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successfull operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddFeedbackAppResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "No token provided / Bad request (invalid request body) / Category already exists",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized (invalid access token)",
+            "content": {}
+          },
+          "404": {
+            "description": "Invalid user / Invalid session",
+            "content": {}
+          }
+        }
+      },
+      "get": {
+        "tags": ["Feedback"],
+        "summary": "Feedback Object",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successfull operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetFeedbackRequest"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/feedback/{id}": {
+      "post": {
+        "tags": ["Feedback"],
+        "summary": "Adding feedback",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "idQuiz",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "description": "User Feedback Object",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddFeedbackIdRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfull operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddFeedbackIdResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "No access to data",
+            "content": {}
+          },
+          "404": {
+            "description": " Invalid session ",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/categories": {
+      "post": {
+        "tags": ["Categories"],
+        "summary": "The categories managing API",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "User categories Object",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddCategoriesRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successfull operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddCategoriesResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "No token provided / Bad request (invalid request body) / Category already exists",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized (invalid access token)",
+            "content": {}
+          },
+          "404": {
+            "description": "Invalid user / Invalid session",
+            "content": {}
+          }
+        }
+      },
+      "get": {
+        "tags": ["Categories"],
+        "summary": "Categories Object",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "Successfull operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetCategoriesRequest"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/quizzes/random": {
+      "get": {
+        "tags": ["Quizzes"],
+        "summary": "Get random or sorted quizzes",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successfull operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetQuizzesRandom"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/quizzes/total": {
+      "get": {
+        "tags": ["Quizzes"],
+        "summary": "The total number of people who passed all quizzes",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successfull operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAllTotalQuizzes"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/quizzes/{quizId}": {
+      "get": {
+        "tags": ["Quizzes"],
+        "summary": "The total number of people who passed all quizzes",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfull operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetOneQuiz"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Quizzes"],
+        "summary": "Increase the counter of passed quizzes by 1",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "idQuiz",
+            "required": true
+          }
+        ],
+
+        "responses": {
+          "200": {
+            "description": "Successfull operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddOnePassed"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "No access to data",
+            "content": {}
+          },
+          "404": {
+            "description": " Invalid session ",
+            "content": {}
+          }
+        }
+      },
+      "put": {
+        "tags": ["Quizzes"],
+        "summary": "Update quiz from quizId",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "idQuiz",
+            "required": true
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "Update quiz from quizId",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddQuizResponse"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfull operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddQuizResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "No access to data",
+            "content": {}
+          },
+          "404": {
+            "description": " Invalid session ",
+            "content": {}
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Quizzes"],
+        "summary": "Delete quiz from quizId",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "idQuiz",
+            "required": true
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "204": {
+            "description": "Successfull operation",
+            "content": {}
+          },
+          "400": {
+            "description": "No token provided",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized (invalid access token)",
+            "content": {}
+          },
+          "403": {
+            "description": "No access to data",
+            "content": {}
+          },
+          "404": {
+            "description": "Invalid user / Invalid session / Category not found",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/quizzes/myquiz": {
+      "get": {
+        "tags": ["Quizzes"],
+        "summary": "Get all quizzes created by the user",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "Successfull operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetUserQuizzes"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/quizzes/passedquiz": {
+      "get": {
+        "tags": ["Quizzes"],
+        "summary": "Get last tests that the user has passed",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "Successfull operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPassedQuizzes"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/quizzes/": {
+      "get": {
+        "tags": ["Quizzes"],
+        "summary": "Get all and filter quizzes",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true
+          },
+          {
+            "in": "query",
+            "name": "q"
+          },
+          {
+            "in": "path",
+            "name": "type"
+          },
+          {
+            "in": "category",
+            "name": "category"
+          },
+          {
+            "in": "rate",
+            "name": "rate"
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetSearchQuiz"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "No token provided",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized (invalid access token)",
+            "content": {}
+          },
+          "404": {
+            "description": "Invalid user / Invalid session",
+            "content": {}
+          }
+        }
+      },
+
+      "post": {
+        "tags": ["Quizzes"],
+        "summary": "Add new quiz",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "User quiz Object",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddQuizRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successfull operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddQuizResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "No token provided / Bad request (invalid request body) / Category already exists",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized (invalid access token)",
+            "content": {}
+          },
+          "404": {
+            "description": "Invalid user / Invalid session",
+            "content": {}
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "RegistrationRequest": {
+        "required": ["name", "email", "password"],
+        "type": "object",
+        "properties": {
+          "name": {
+            "$ref": "#/components/examples/user/name"
+          },
+          "email": {
+            "$ref": "#/components/examples/user/email"
+          },
+          "password": {
+            "$ref": "#/components/examples/user/password"
+          }
+        }
+      },
+      "RegistrationResponse": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "$ref": "#/components/examples/user/name"
+          },
+          "email": {
+            "$ref": "#/components/examples/user/email"
+          }
+        }
+      },
+      "LoginRequest": {
+        "required": ["email", "password"],
+        "type": "object",
+        "properties": {
+          "email": {
+            "$ref": "#/components/examples/user/email"
+          },
+          "password": {
+            "$ref": "#/components/examples/user/password"
+          }
+        }
+      },
+      "LoginResponse": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "User`s id",
+            "example": "9987654321123456789"
+          },
+          "email": {
+            "$ref": "#/components/examples/user/email"
+          },
+          "name": {
+            "$ref": "#/components/examples/user/name"
+          },
+          "userAvatar": {
+            "$ref": "#/components/examples/user/userAvatar"
+          },
+          "average": {
+            "$ref": "#/components/examples/user/average"
+          },
+          "favorites": {
+            "$ref": "#/components/examples/user/favorites"
+          },
+          "passedQuizzes": { "$ref": "#/components/examples/PassedQuizzes" },
+          "token": {
+            "type": "string",
+            "description": "Received token during authentication",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI1ZmMyMDg1YmQwOTM2NTI4MTA3Y2UyNzQiLCJzaWQiOiI1ZmMyZDJmY2UxZDIwNTA2NzAyYmRkMjIiLCJpYXQiOjE2MDY2MDM1MTYsImV4cCI6MTYwNjYwNzExNn0.rJ_QjU4KvA76H96RHsvOBChK0Vjbd0NmqjMxdQVJIXB"
+          }
+        }
+      },
+      "UpdateAvatarRequest": {
+        "required": ["avatar"],
+        "type": "object",
+        "properties": {
+          "avatar": {
+            "$ref": "#/components/examples/user/userAvatar"
+          }
+        }
+      },
+      "UpdateAvatarResponse": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "$ref": "#/components/examples/user/userId"
+          },
+          "userAvatar": {
+            "$ref": "#/components/examples/user/userAvatar"
+          }
+        }
+      },
+      "GetUserCurrentResponse": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "$ref": "#/components/examples/user/name"
+          },
+          "email": {
+            "$ref": "#/components/examples/user/email"
+          },
+          "userAvatar": {
+            "$ref": "#/components/examples/user/userAvatar"
+          },
+          "average": {
+            "$ref": "#/components/examples/user/average"
+          },
+          "passedQuizzes": { "$ref": "#/components/examples/PassedQuizzes" }
+        }
+      },
+      "GetFavoriteRequest": {
+        "type": "object",
+        "properties": {
+          "data": { "$ref": "#/components/examples/Quiz" },
+          "totalFavorites": {
+            "type": "integer",
+            "description": "Total of favorite in the quiz",
+            "example": "10"
+          }
+        }
+      },
+      "AddFavoriteRequest": {
+        "required": ["favorites"],
+        "type": "object",
+        "properties": {
+          "favorites": {
+            "type": "string",
+            "description": "Favorites id",
+            "example": "9987654321123456789"
+          }
+        }
+      },
+      "AddFavoriteResponse": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "$ref": "#/components/examples/user/userId"
+          },
+          "favorites": {
+            "$ref": "#/components/examples/user/favorites"
+          }
+        }
+      },
+      "AddPassedQuizRequest": {
+        "required": ["quizId", "quantityQuestions", "correctAnswers"],
+        "type": "object",
+        "properties": {
+          "quizId": {
+            "$ref": "#/components/examples/quiz/quizId"
+          },
+          "quantityQuestions": {
+            "type": "integer",
+            "description": "Number of questions in the quiz",
+            "example": "10"
+          },
+          "correctAnswers": {
+            "type": "integer",
+            "description": "Number of answers in the quiz",
+            "example": "10"
+          }
+        }
+      },
+      "AddPassedQuizResponse": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "$ref": "#/components/examples/user/userId"
+          },
+          "passedQuizzes": { "$ref": "#/components/examples/PassedQuizzes" },
+          "totalQuestions": {
+            "$ref": "#/components/examples/user/totalQuestions"
+          },
+          "totalAnswers": {
+            "$ref": "#/components/examples/user/totalAnswers"
+          },
+          "average": {
+            "$ref": "#/components/examples/user/average"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "data-time",
+            "example": "2023-11-04T19:03:30.046Z"
+          }
+        }
+      },
+      "AddFeedbackAppRequest": {
+        "required": ["userName", "rate", "comment"],
+        "type": "object",
+        "properties": {
+          "userName": {
+            "$ref": "#/components/examples/user/name"
+          },
+          "rate": {
+            "type": "integer",
+            "description": "Rate feedback about application",
+            "example": "3"
+          },
+          "comment": {
+            "type": "string",
+            "description": "Comment feedback",
+            "example": "Test comment",
+            "minLength": 8,
+            "maxLength": 500
+          }
+        }
+      },
+      "AddFeedbackAppResponse": {
+        "type": "object",
+        "$ref": "#/components/examples/feedbacks"
+      },
+      "GetFeedbackRequest": {
+        "type": "object",
+        "properties": {
+          "feedbacks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+
+              "$ref": "#/components/examples/feedbacks"
+            }
+          },
+          "totalCount": {
+            "type": "integer",
+            "description": "Total feedback",
+            "example": 2
+          }
+        }
+      },
+      "AddFeedbackIdRequest": {
+        "required": ["quizId", "userName", "rate", "comment"],
+        "type": "object",
+        "properties": {
+          "userName": {
+            "$ref": "#/components/examples/user/name"
+          },
+          "rate": {
+            "$ref": "#/components/examples/quiz/rate"
+          },
+          "comment": {
+            "type": "string",
+            "description": "Comment feedback",
+            "example": "Test comment",
+            "minLength": 8,
+            "maxLength": 500
+          },
+          "quizId": {
+            "$ref": "#/components/examples/quiz/quizId"
+          }
+        }
+      },
+      "AddFeedbackIdResponse": {
+        "type": "object",
+        "properties": {
+          "quizName": {
+            "$ref": "#/components/examples/quiz/quizName"
+          },
+          "rate": {
+            "$ref": "#/components/examples/quiz/rate"
+          },
+          "totalPassed": {
+            "$ref": "#/components/examples/quiz/totalPassed"
+          },
+          "owner": {
+            "$ref": "#/components/examples/quiz/owner"
+          },
+          "quizCategory": {
+            "$ref": "#/components/examples/quiz/quizCategory"
+          },
+          "quizType": {
+            "$ref": "#/components/examples/quiz/quizType"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "data-time",
+            "example": "2023-11-04T19:03:30.046Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "data-time",
+            "example": "2023-11-04T19:03:30.046Z"
+          },
+          "_id": {
+            "$ref": "#/components/examples/quiz/quizId"
+          }
+        }
+      },
+      "AddCategoriesRequest": {
+        "type": "object",
+        "$ref": "#/components/examples/QuizCategoryFull"
+      },
+      "AddCategoriesResponse": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "$ref": "#/components/examples/QuizCategoryFull"
+          },
+
+          "_id": {
+            "type": "string",
+            "description": "Category id",
+            "example": "9987654321123456789"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "data-time",
+            "example": "2023-11-04T19:03:30.046Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "data-time",
+            "example": "2023-11-04T19:03:30.046Z"
+          }
+        }
+      },
+      "GetCategoriesRequest": {
+        "type": "object",
+        "properties": {
+          "adults": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "description": "Category adults",
+              "$ref": "#/components/examples/QuizCategory"
+            }
+          },
+          "children": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "description": "Category children",
+              "$ref": "#/components/examples/QuizCategory"
+            }
+          }
+        }
+      },
+      "GetQuizzesRandom": {
+        "type": "object",
+        "properties": {
+          "adults": {
+            "type": "object",
+            "description": "Object adults -50%",
+            "properties": {
+              "quizzes": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "$ref": "#/components/examples/CategoriesSchema"
+                }
+              }
+            }
+          },
+
+          "children": {
+            "type": "object",
+            "description": "Object children -50%",
+            "properties": {
+              "quizzes": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "$ref": "#/components/examples/CategoriesSchema"
+                }
+              }
+            }
+          }
+        }
+      },
+      "GetAllTotalQuizzes": {
+        "type": "integer"
+      },
+      "GetOneQuiz": {
+        "type": "array",
+        "items": {
+          "type": "object",
+
+          "properties": {
+            "_id": {
+              "type": "string",
+              "description": "Feedback id",
+              "example": "9987654321123456789"
+            },
+            "time": {
+              "type": "integer",
+              "description": "Time",
+              "example": "60"
+            },
+            "image": {
+              "type": "http",
+              "description": "Url image",
+              "example": "https://some.url.com/path/to/image.jpg or null"
+            },
+            "question": {
+              "type": "string",
+              "description": "Question",
+              "example": "Name question"
+            },
+            "answers": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "description": "Array answers",
+
+                "$ref": "#/components/examples/Answers"
+              }
+            },
+            "quizId": {
+              "type": "string",
+              "description": "Object children -50%",
+              "$ref": "#/components/examples/QuizId"
+            }
+          }
+        }
+      },
+      "GetUserQuizzes": {
+        "type": "array",
+        "items": {
+          "type": "object",
+
+          "properties": {
+            "_id": {
+              "$ref": "#/components/examples/quiz/quizId"
+            },
+            "quizName": {
+              "$ref": "#/components/examples/quiz/quizName"
+            },
+            "rate": {
+              "$ref": "#/components/examples/quiz/rate"
+            },
+            "totalPassed": {
+              "$ref": "#/components/examples/quiz/totalPassed"
+            },
+            "owner": { "$ref": "#/components/examples/Owner" },
+            "quizCategory": { "$ref": "#/components/examples/QuizCategory" }
+          }
+        }
+      },
+      "GetPassedQuizzes": {
+        "type": "array",
+        "items": {
+          "type": "object",
+
+          "properties": {
+            "_id": {
+              "$ref": "#/components/examples/quiz/quizId"
+            },
+            "quizName": {
+              "$ref": "#/components/examples/quiz/quizName"
+            },
+            "rate": {
+              "$ref": "#/components/examples/quiz/rate"
+            },
+            "totalPassed": {
+              "$ref": "#/components/examples/quiz/totalPassed"
+            },
+            "owner": { "$ref": "#/components/examples/quiz/owner" },
+            "quizCategory": { "$ref": "#/components/examples/QuizCategory" },
+            "quizType": {
+              "$ref": "#/components/examples/quiz/quizType"
+            },
+            "createdAt": {
+              "type": "string",
+              "format": "data-time",
+              "example": "2023-11-04T19:03:30.046Z"
+            },
+            "updatedAt": {
+              "type": "string",
+              "format": "data-time",
+              "example": "2023-11-04T19:03:30.046Z"
+            },
+            "quantityQuestions": {
+              "type": "integer",
+              "description": "Quantity questions in the quiz",
+              "example": "10",
+              "default": "0"
+            },
+            "correctAnswers": {
+              "type": "integer",
+              "description": "Correct answers",
+              "example": "10",
+              "default": "0"
+            }
+          }
+        }
+      },
+      "GetSearchQuiz": {
+        "type": "array",
+        "items": {
+          "type": "object",
+
+          "properties": {
+            "_id": {
+              "$ref": "#/components/examples/quiz/quizId"
+            },
+            "quizName": {
+              "$ref": "#/components/examples/quiz/quizName"
+            },
+            "rate": {
+              "$ref": "#/components/examples/quiz/rate"
+            },
+            "totalPassed": {
+              "$ref": "#/components/examples/quiz/totalPassed"
+            },
+            "owner": { "$ref": "#/components/examples/Owner" },
+            "quizCategory": {
+              "$ref": "#/components/examples/QuizCategoryFull"
+            },
+            "quizType": {
+              "$ref": "#/components/examples/quiz/quizType"
+            },
+            "createdAt": {
+              "type": "string",
+              "format": "data-time",
+              "example": "2023-11-04T19:03:30.046Z"
+            },
+            "updatedAt": {
+              "type": "string",
+              "format": "data-time",
+              "example": "2023-11-04T19:03:30.046Z"
+            }
+          }
+        }
+      },
+      "AddQuizRequest": {
+        "type": "object",
+        "properties": {
+          "quizName": {
+            "$ref": "#/components/examples/quiz/quizName"
+          },
+          "quizCategory": {
+            "$ref": "#/components/examples/quiz/quizCategory"
+          },
+          "quizType": {
+            "$ref": "#/components/examples/quiz/quizType"
+          },
+          "questions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "$ref": "#/components/examples/Questions"
+            }
+          }
+        }
+      },
+      "AddQuizResponse": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "$ref": "#/components/examples/quiz/quizId"
+          },
+          "owner": {
+            "$ref": "#/components/examples/quiz/owner"
+          },
+          "quizName": {
+            "$ref": "#/components/examples/quiz/quizName"
+          },
+          "quizCategory": {
+            "$ref": "#/components/examples/quiz/quizCategory"
+          },
+          "quizType": {
+            "$ref": "#/components/examples/quiz/quizType"
+          },
+          "rate": {
+            "$ref": "#/components/examples/quiz/rate"
+          },
+          "totalPassed": {
+            "$ref": "#/components/examples/quiz/totalPassed"
+          },
+          "questions": {
+            "type": "array",
+            "$ref": "#/components/examples/Questions"
+          }
+        }
+      },
+      "AddOnePassed": {
+        "type": "object",
+        "$ref": "#/components/examples/Quize"
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "examples": {
+      "CategoriesSchema": {
+        "type": "object",
+        "properties": {
+          "quizzes": {
+            "$ref": "#/components/examples/Quize"
+          }
+        }
+      },
+      "Quize": {
+        "type": "object",
+        "properties": {
+          "quizId": {
+            "$ref": "#/components/examples/quiz/quizId"
+          },
+          "quizName": {
+            "$ref": "#/components/examples/quiz/quizName"
+          },
+          "rate": {
+            "$ref": "#/components/examples/quiz/rate"
+          },
+          "totalPassed": {
+            "$ref": "#/components/examples/quiz/totalPassed"
+          },
+          "owner": {
+            "$ref": "#/components/examples/quiz/owner"
+          },
+          "quizCategory": {
+            "$ref": "#/components/examples/quiz/quizCategory"
+          },
+          "quizType": {
+            "$ref": "#/components/examples/quiz/quizType"
+          }
+        }
+      },
+      "QuizId": {
+        "description": "One quizById",
+        "type": "object",
+        "properties": {
+          "_id": {
+            "$ref": "#/components/examples/quiz/quizId"
+          },
+          "quizName": {
+            "$ref": "#/components/examples/quiz/quizName"
+          }
+        }
+      },
+      "Owner": {
+        "description": "One quizById",
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "User`s id",
+            "example": "9987654321123456789"
+          },
+          "favorites": {
+            "type": "object",
+            "description": "Array of user's favorite quizzes",
+            "example": "true"
+          }
+        }
+      },
+      "QuizCategory": {
+        "description": "One quizById",
+        "type": "object",
+        "properties": {
+          "categoryName": {
+            "type": "string",
+            "description": "Category name",
+            "example": "Cars"
+          }
+        }
+      },
+      "QuizCategoryFull": {
+        "description": "One quizById",
+        "type": "object",
+        "properties": {
+          "categoryName": {
+            "type": "string",
+            "description": "Category name",
+            "example": "Cars"
+          },
+          "categoryType": {
+            "type": "string",
+            "enum": ["adults", "children"],
+            "description": "Category type",
+            "example": "adults"
+          }
+        }
+      },
+      "PassedQuizzes": {
+        "description": "One quizById",
+        "type": "array",
+        "items": {
+          "type": "object",
+
+          "properties": {
+            "quizId": {
+              "type": "string",
+              "description": "Quiz id",
+              "example": "9987654321123456789"
+            },
+            "quantityQuestions": {
+              "type": "integer",
+              "description": "Quantity questions in the quiz",
+              "example": "10",
+              "default": "0"
+            },
+            "correctAnswers": {
+              "type": "integer",
+              "description": "Correct answers",
+              "example": "10",
+              "default": "0"
+            },
+            "_id": {
+              "type": "string",
+              "description": "User`s id",
+              "example": "9987654321123456789"
+            }
+          }
+        }
+      },
+      "Questions": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "true or false",
+            "example": "true or false"
+          },
+          "time": {
+            "type": "integer",
+            "description": "Time",
+            "example": "60"
+          },
+          "image": {
+            "type": "http",
+            "description": "Url image",
+            "example": "https://some.url.com/path/to/image.jpg or null"
+          },
+          "question": {
+            "type": "string",
+            "description": "Question",
+            "example": "Name question"
+          },
+          "background": {
+            "type": "string",
+            "enum": [
+              "rgba(255, 255, 255, 0.02)",
+              "#43A8D3",
+              "#6636C5",
+              " #E65368"
+            ],
+            "description": "Background type",
+            "example": "#43A8D3"
+          },
+          "answers": {
+            "type": "array",
+            "items": {
+              "type": "object",
+
+              "description": "Array answers",
+              "$ref": "#/components/examples/Answers"
+            }
+          },
+          "quizId": {
+            "$ref": "#/components/examples/quiz/quizId"
+          }
+        }
+      },
+      "Answers": {
+        "type": "object",
+        "properties": {
+          "answer": {
+            "type": "string",
+            "description": "Answer",
+            "example": "yes"
+          },
+          "correctAnswer": {
+            "type": "string",
+            "description": "true or false",
+            "example": "true"
+          }
+        }
+      },
+      "user": {
+        "userId": {
+          "type": "string",
+          "description": "User`s id",
+          "example": "9987654321123456789"
+        },
+        "name": {
+          "type": "string",
+          "description": "User's name",
+          "example": "Bob",
+          "minLength": 3,
+          "maxLength": 50
+        },
+        "email": {
+          "type": "string",
+          "description": "User's email",
+          "format": "email"
+        },
+        "password": {
+          "type": "string",
+          "description": "User's password",
+          "example": "qwer1234",
+          "minLength": 6,
+          "maxLength": 64
+        },
+        "userAvatar": {
+          "type": "string",
+          "description": "User`s avatar url",
+          "example": "https://some.url.com/path/to/avatar.jpg or null"
+        },
+        "average": {
+          "type": "integer",
+          "description": "Average value of user test results",
+          "example": "10 or null"
+        },
+        "favorites": {
+          "type": "array",
+          "description": "Array of user's favorite quizzes",
+          "example": ["1234567890abcdef", "fedcba0987654321"]
+        },
+        "totalQuestions": {
+          "type": "integer",
+          "description": "Total of questions in the quiz",
+          "example": "10",
+          "default": "0"
+        },
+        "totalAnswers": {
+          "type": "integer",
+          "description": "Total of answers in the quiz",
+          "example": "10",
+          "default": "0"
+        }
+      },
+      "quiz": {
+        "quizId": {
+          "type": "string",
+          "description": "Quiz id",
+          "example": "9987654321123456789"
+        },
+        "quizName": {
+          "type": "string",
+          "description": "Quiz name",
+          "example": "Test quiz name",
+          "minLength": 3,
+          "maxLength": 50
+        },
+        "rate": {
+          "type": "integer",
+          "description": "Quiz rating",
+          "example": "3,2"
+        },
+        "totalPassed": {
+          "type": "integer",
+          "description": "Total of questions in the quiz",
+          "example": "10",
+          "default": "0"
+        },
+        "owner": {
+          "type": "string",
+          "description": "User`s id",
+          "example": "98766454522132"
+        },
+        "quizCategory": {
+          "type": "string",
+          "description": "Categories id",
+          "example": "98766454522132"
+        },
+        "quizType": {
+          "type": "string",
+          "description": "Type category",
+          "example": "children"
+        }
+      },
+      "feedbacks": {
+        "description": "Feedbacks",
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "Feedback id",
+            "example": "9987654321123456789"
+          },
+          "userName": {
+            "$ref": "#/components/examples/user/name"
+          },
+          "rate": {
+            "type": "integer",
+            "description": "Rate feedback about application",
+            "example": "3,2"
+          },
+          "comment": {
+            "type": "string",
+            "description": "Comment feedback",
+            "example": "Test comment",
+            "minLength": 8,
+            "maxLength": 500
+          },
+          "userAvatar": {
+            "$ref": "#/components/examples/user/userAvatar"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "data-time",
+            "example": "2023-11-04T19:03:30.046Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "data-time",
+            "example": "2023-11-04T19:03:30.046Z"
+          }
+        }
+      }
+    }
+  }
+}
