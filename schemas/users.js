@@ -14,8 +14,8 @@ const updateUserPassedQuizzesSchema = Joi.object({
   quizId: Joi.string()
     .required()
     .messages({
-      'string.empty': errMsg.errFieldIsrequired('favorites field'),
-      'any.required': errMsg.errFieldIsrequired('favorites field'),
+      'string.empty': errMsg.errFieldIsrequired('quizId field'),
+      'any.required': errMsg.errFieldIsrequired('quizId field'),
     }),
   quantityQuestions: Joi.number()
     .integer()
@@ -33,9 +33,16 @@ const updateUserPassedQuizzesSchema = Joi.object({
     }),
 });
 
+const updateUserSchema = Joi.object({
+  name: Joi.string().messages({
+    'any.required': errMsg.errFieldIsrequired('quantityQuestions field'),
+  }),
+});
+
 const schemas = {
   updateFavoritesSchema,
   updateUserPassedQuizzesSchema,
+  updateUserSchema,
 };
 
 module.exports = schemas;

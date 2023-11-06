@@ -49,31 +49,51 @@ const updateFavorite = async (req, res, next) => {
 const updateUser = async (req, res) => {
   const { _id } = req.user;
 
-  // ================ update Avatar ===========
-  await jimp
-    .read(req.file.path)
-    .then(image => {
-      return image.resize(100, 100).quality(80).writeAsync(req.file.path);
-    })
-    .catch(err => {
-      throw HttpError(400, err.message);
-    });
+  const updateFields = {};
 
-  const dataFile = await cloudinary.uploader.upload(req.file.path, {
-    folder: 'quize-user-avatars',
+  if (req.file) {
+    await jimp
+      .read(req.file.path)
+      .then(image => {
+        return image.resize(100, 100).quality(80).writeAsync(req.file.path);
+      })
+      .catch(err => {
+        throw HttpError(400, err.message);
+      });
+    const { url } = await cloudinary.uploader.upload(req.file.path, {
+      folder: 'quize-user-avatars',
+    });
+    await fs.unlink(req.file.path);
+    updateFields.userAvatar = url;
+    if (req.body)
+      for (const key in req.body) {
+        updateFields[key] = req.body[key];
+      }
+  } else {
+    for (const key in req.body) {
+      updateFields[key] = req.body[key];
+    }
+  }
+
+  const result = await User.findByIdAndUpdate(_id, updateFields, {
+    new: true,
+    select: 'userAvatar name email',
   });
-  await fs.unlink(req.file.path);
-  // =================================
-  const result = await User.findByIdAndUpdate(
-    _id,
-    { userAvatar: dataFile.url },
-    { new: true, select: 'userAvatar' }
-  );
 
   res.json(result);
 };
 
 const addPassedQuiz = async (req, res, next) => {
+  const { passedQuizzes } = await User.findById(req.user._id);
+  const isPassedQuiz = passedQuizzes.find(
+    quiz => quiz.quizId === req.body.quizId
+  );
+  if (isPassedQuiz) {
+    throw HttpError(
+      409,
+      `Quize ${req.body.quizId} is alredy in the passed quizzes`
+    );
+  }
   const result = await User.findByIdAndUpdate(
     req.user._id,
     {
@@ -83,16 +103,52 @@ const addPassedQuiz = async (req, res, next) => {
         totalAnswers: req.body.correctAnswers,
       },
     },
-    { new: true, select: 'totalQuestions totalAnswers average passedQuizzes' }
+    { new: true, select: 'totalAnswers totalQuestions average passedQuizzes' }
   );
 
   result.average = Math.round(
     (result.totalAnswers / result.totalQuestions) * 100
   );
+  await result.save();
+
+  res.json(result);
+};
+
+const updatePassedQuiz = async (req, res, next) => {
+  const { passedQuizzes } = await User.findOne(req.user._id);
+
+  const quiz = passedQuizzes.find(item => item.quizId === req.body.quizId);
+
+  if (!quiz) {
+    throw HttpError(
+      404,
+      `Quize ${req.body.quizId} not found in passed quizzes`
+    );
+  }
+
+  const query = { _id: req.user._id, 'passedQuizzes.quizId': req.body.quizId };
+  const update = {
+    $set: {
+      'passedQuizzes.$.quantityQuestions': req.body.quantityQuestions,
+      'passedQuizzes.$.correctAnswers': req.body.correctAnswers,
+    },
+    $inc: {
+      totalQuestions: req.body.quantityQuestions,
+      totalAnswers: req.body.correctAnswers,
+    },
+  };
+  const result = await User.findOneAndUpdate(query, update, {
+    new: true,
+    select: 'average passedQuizzes totalAnswers totalQuestions',
+  });
+
+  result.average = Math.round(
+    (Number(result.totalAnswers) / Number(result.totalQuestions)) * 100
+  );
 
   await result.save();
 
-  return res.json(result);
+  res.json(result);
 };
 
 module.exports = {
@@ -100,4 +156,5 @@ module.exports = {
   getAllFavorites: ctrlWrapper(getAllFavorites),
   addPassedQuiz: ctrlWrapper(addPassedQuiz),
   updateUser: ctrlWrapper(updateUser),
+  updatePassedQuiz: ctrlWrapper(updatePassedQuiz),
 };
