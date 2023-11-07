@@ -206,7 +206,10 @@ const getSearchQuiz = async (req, res) => {
   category && arrOptions.push({ quizCategory: category.split(' ') });
   rate &&
     arrOptions.push({
-      rate: { $gte: Number(rate) - 0.5, $lt: Number(rate) + 0.5 },
+      rate: {
+        $gte: Number(rate) - 0.5,
+        $lt: Number(rate) + 0.5,
+      },
     });
   // ******
   // const arrOptions = {};
@@ -234,17 +237,22 @@ const getSearchQuiz = async (req, res) => {
   const { _id } = req.user;
   const { favorites } = await User.findById(_id, 'favorites');
 
-  const result = await Quiz.find({ $and: arrOptions }, '', options)
-    .populate('quizCategory')
-    .populate('owner', 'favorites');
+  const result = await Quiz.find({ $and: arrOptions }, '', options).populate(
+    'quizCategory'
+  );
+  // .populate('owner', 'favorites');
 
   // *************************// чи знаходиться в обраних
   const prepareData = result.map(el => {
     const newEl = JSON.parse(JSON.stringify(el));
-    const { _id } = newEl;
-    const isFavorite = favorites.find(favId => favId === _id);
-    newEl.owner.favorites = !!isFavorite;
-    return newEl;
+    // const { _id } = newEl;
+    // const isFavorite = favorites.find(favId => favId === newEl._id);
+    const isFavorite = favorites.includes(newEl._id);
+
+    // newEl.owner.favorites = isFavorite;
+
+    // console.log('newEl: ', { ...newEl, isFavorite });
+    return { ...newEl, isFavorite };
   });
 
   res.json(prepareData);
