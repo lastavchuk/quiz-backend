@@ -5,6 +5,7 @@ const isEmptyObj = require('./isEmptyObj');
 const sendEmailSendGrid = require('./sendEmailSendGrid');
 const sendEmailUkrNet = require('./sendEmailUkrNet');
 const verifyEmailTmpl = require('./verifyEmailTmpl');
+const definedFavorites = require('./definedFavorites');
 const cloudinary = require('./cloudinary');
 
 module.exports = {
@@ -16,4 +17,5 @@ module.exports = {
   sendEmailUkrNet,
   sendEmailSendGrid,
   cloudinary,
+  definedFavorites,
 };

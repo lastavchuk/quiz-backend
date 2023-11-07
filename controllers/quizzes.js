@@ -2,7 +2,7 @@ const Quiz = require('../models/quiz');
 const Question = require('../models/question');
 const Category = require('../models/category');
 const User = require('../models/user');
-const { ctrlWrapper, HttpError } = require('../helpers');
+const { ctrlWrapper, HttpError, definedFavorites } = require('../helpers');
 const errMsg = require('../constants/errors');
 
 const addQuiz = async (req, res) => {
@@ -133,24 +133,30 @@ const getAllQuizCreateUser = async (req, res) => {
   const options = { skip, limit };
   const { _id } = req.user;
   const par = { owner: _id };
-  const result = await Quiz.find(par, '_id quizName rate totalPassed', options)
-    .populate('quizCategory', '-_id categoryName')
-    .populate('owner', 'favorites');
-  // *************************// чи знаходиться в обраних
-  const prepareData = result.map(el => {
-    const newEl = JSON.parse(JSON.stringify(el));
-    const { _id } = newEl;
-    const { favorites } = newEl.owner;
-    const isFavorite = favorites.find(favId => favId === _id);
+  const result = await Quiz.find(
+    par,
+    '_id quizName rate totalPassed',
+    options
+  ).populate('quizCategory', '-_id categoryName');
+  // .populate('owner', 'favorites');
 
-    newEl.isFavorite = !!isFavorite;
-    // if (isFavorite) {
-    //   newEl.owner.favorites = true;
-    // } else {
-    //   newEl.owner.favorites = false;
-    // }
-    return newEl;
-  });
+  const { favorites } = await User.findById(_id, 'favorites');
+  // *************************// чи знаходиться в обраних
+  const prepareData = definedFavorites(result, favorites);
+  // const prepareData = result.map(el => {
+  //   const newEl = JSON.parse(JSON.stringify(el));
+  //   const { _id } = newEl;
+  //   const { favorites } = newEl.owner;
+  //   const isFavorite = favorites.find(favId => favId === _id);
+
+  //   newEl.isFavorite = !!isFavorite;
+  //   // if (isFavorite) {
+  //   //   newEl.owner.favorites = true;
+  //   // } else {
+  //   //   newEl.owner.favorites = false;
+  //   // }
+  //   return newEl;
+  // });
 
   res.json(prepareData);
 };
@@ -244,17 +250,18 @@ const getSearchQuiz = async (req, res) => {
   // .populate('owner', 'favorites');
 
   // *************************// чи знаходиться в обраних
-  const prepareData = result.map(el => {
-    const newEl = JSON.parse(JSON.stringify(el));
-    // const { _id } = newEl;
-    // const isFavorite = favorites.find(favId => favId === newEl._id);
-    const isFavorite = favorites.includes(newEl._id);
+  const prepareData = definedFavorites(result, favorites);
+  // const prepareData = result.map(el => {
+  //   const newEl = JSON.parse(JSON.stringify(el));
+  //   // const { _id } = newEl;
+  //   // const isFavorite = favorites.find(favId => favId === newEl._id);
+  //   const isFavorite = favorites.includes(newEl._id);
 
-    // newEl.owner.favorites = isFavorite;
+  //   // newEl.owner.favorites = isFavorite;
 
-    // console.log('newEl: ', { ...newEl, isFavorite });
-    return { ...newEl, isFavorite };
-  });
+  //   // console.log('newEl: ', { ...newEl, isFavorite });
+  //   return { ...newEl, isFavorite };
+  // });
 
   res.json(prepareData);
 };
