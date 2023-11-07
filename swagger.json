@@ -155,13 +155,7 @@
       "get": {
         "tags": ["Auth"],
         "summary": "Gets about user info",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "Authorization",
-            "required": true
-          }
-        ],
+        "parameters": [],
         "security": [{ "Bearer": [] }],
         "responses": {
           "200": {
@@ -272,6 +266,52 @@
           },
           "404": {
             "description": "Invalid user / Invalid session",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/users/retake-passed-quiz": {
+      "patch": {
+        "tags": ["Users"],
+        "summary": "Retake quiz",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "Completed quiz that was passed by the user",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddPassedQuizRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddPassedQuizResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request (invalid request body)",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized (invalid access token)",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {}
+          },
+          "404": {
+            "description": "Invalid user / Invalid session/ Quize not found in passed quizzes",
             "content": {}
           }
         }
