@@ -6,12 +6,9 @@ const feedbackSchemaJoi = Joi.object({
   userName: Joi.string()
     .min(3)
     .max(50)
-    .required()
     .messages({
       'string.min': errMsg.errFieldMinLength('User name', 3),
       'string.max': errMsg.errFieldMaxLength('User name', 50),
-      'string.empty': errMsg.errFieldIsrequired('User name'),
-      'any.required': errMsg.errFieldIsrequired('User name'),
     }),
   userAvatar: Joi.string(),
   rate: Joi.number()
@@ -26,12 +23,9 @@ const feedbackSchemaJoi = Joi.object({
   comment: Joi.string()
     .min(8)
     .max(500)
-    .required()
     .messages({
       'string.min': errMsg.errFieldMinLength('Comment', 8),
       'string.max': errMsg.errFieldMaxLength('Comment', 500),
-      'string.empty': errMsg.errFieldIsrequired('Comment'),
-      'any.required': errMsg.errFieldIsrequired('Comment'),
     }),
 });
 
