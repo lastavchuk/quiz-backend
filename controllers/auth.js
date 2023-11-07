@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const gravatar = require('gravatar');
+
 const randomId = require('crypto').randomUUID;
 
 const User = require('../models/user');
@@ -12,13 +12,6 @@ const { SECRET_KEY } = process.env;
 
 const register = async (req, res) => {
   const hashPass = await bcrypt.hash(req.body.password, 10);
-
-  // const userAvatar = gravatar.url(req.body.email, {
-  //   protocol: 'https',
-  //   s: '100',
-  // });
-
-  // "https://gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50";
 
   const verificationToken = randomId();
 
