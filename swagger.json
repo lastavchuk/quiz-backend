@@ -193,7 +193,13 @@
       "patch": {
         "tags": ["Users"],
         "summary": "Updates user`s avatar",
-        "parameters": [],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true
+          }
+        ],
         "security": [{ "Bearer": [] }],
         "requestBody": {
           "description": "New user`s avatar file",
@@ -235,7 +241,13 @@
       "patch": {
         "tags": ["Users"],
         "summary": "Creates user`s quizzes",
-        "parameters": [],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true
+          }
+        ],
         "security": [{ "Bearer": [] }],
         "requestBody": {
           "description": "Completed quiz that was passed by the user",
@@ -277,11 +289,69 @@
         }
       }
     },
+    "/users/retake-passed-quiz": {
+      "patch": {
+        "tags": ["Users"],
+        "summary": "Retake quiz",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "Completed quiz that was passed by the user",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddPassedQuizRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddPassedQuizResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request (invalid request body)",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized (invalid access token)",
+            "content": {}
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {}
+          },
+          "404": {
+            "description": "Invalid user / Invalid session/ Quize not found in passed quizzes",
+            "content": {}
+          }
+        }
+      }
+    },
     "/users/favorites": {
       "patch": {
         "tags": ["Users"],
         "summary": "Adding a quiz to favorites",
-        "parameters": [],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true
+          }
+        ],
         "security": [{ "Bearer": [] }],
         "requestBody": {
           "description": "User Favorites Object",
@@ -321,7 +391,13 @@
       "get": {
         "tags": ["Users"],
         "summary": "User Favorites Object",
-        "parameters": [],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true
+          }
+        ],
         "security": [{ "Bearer": [] }],
         "responses": {
           "200": {
