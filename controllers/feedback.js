@@ -18,7 +18,7 @@ const addFeedbackQuizId = async (req, res) => {
     (oldRate.rate * oldRate.totalPassed + rate) / (oldRate.totalPassed + 1);
   const resQuizes = await Quiz.findByIdAndUpdate(
     quizId,
-    { rate: average },
+    { rate: Number(average.toFixed(2)) },
     { new: true }
   );
 
