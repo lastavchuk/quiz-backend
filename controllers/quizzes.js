@@ -127,7 +127,7 @@ const deleteQuiz = async (req, res) => {
 
 // **************************************
 const getAllQuizCreateUser = async (req, res) => {
-  const { page = 1, limit = 6 } = req.query;
+  const { page = 1, limit = 8 } = req.query;
 
   const skip = (page - 1) * limit;
   const options = { skip, limit };
@@ -173,7 +173,7 @@ const getOneQuiz = async (req, res) => {
 };
 // *****************************************
 const getSearchQuiz = async (req, res) => {
-  const { page = 1, limit = 6, q, type, rate, category } = req.query;
+  const { page = 1, limit = 8, q, rate, category } = req.query;
 
   const skip = (page - 1) * limit;
   // *******************************************//
@@ -194,24 +194,47 @@ const getSearchQuiz = async (req, res) => {
   // const result = await Quiz.find(filter, '', { skip, limit });
   // *******************************************//
   const options = { skip, limit };
-  const qq = new RegExp(`${q}`, 'i');
+  const qq = new RegExp(q, 'i');
 
-  const catId = await Category.find({ categoryName: category }); // видалити 2 строки якщо пошук по id
-  const oneCategory = catId.map(itm => itm._id); // ------
+  // const catId = await Category.find({ categoryName: category }); // видалити 2 строки якщо пошук по id
+  // const oneCategory = catId.map(itm => itm._id); // ------
+  // *** */
 
-  const arrOprions = [
-    { quizName: qq },
-    { quizType: type },
-    { quizCategory: oneCategory },
-  ]; // замінити при пошуку по id на category
+  const arrOptions = [];
 
-  if (rate) {
-    arrOprions.push({
+  qq && arrOptions.push({ quizName: qq });
+  category && arrOptions.push({ quizCategory: category.split(' ') });
+  rate &&
+    arrOptions.push({
       rate: { $gte: Number(rate) - 0.5, $lt: Number(rate) + 0.5 },
     });
-  }
+  // ******
+  // const arrOptions = {};
+  // if (qq) {
+  //   arrOptions.quizName = qq;
+  // }
+  // if (category) {
+  //   arrOptions.quizCategory = category.split(' ');
+  // }
+  // if (rate) {
+  //   arrOptions.rate = { $gte: Number(rate) - 0.5, $lt: Number(rate) + 0.5 };
+  // }
+  // console.log(arrOptions);
+  // const arrOptions = [
 
-  const result = await Quiz.find({ $or: arrOprions }, '', options)
+  //   { quizType: type },
+  //   { quizCategory: oneCategory },
+  // ]; // замінити при пошуку по id на category
+
+  // if (rate) {
+  //   arrOptions.push({
+  //     rate: { $gte: Number(rate) - 0.5, $lt: Number(rate) + 0.5 },
+  //   });
+  // }
+  const { _id } = req.user;
+  const { favorites } = await User.findById(_id, 'favorites');
+
+  const result = await Quiz.find({ $and: arrOptions }, '', options)
     .populate('quizCategory')
     .populate('owner', 'favorites');
 
@@ -219,14 +242,8 @@ const getSearchQuiz = async (req, res) => {
   const prepareData = result.map(el => {
     const newEl = JSON.parse(JSON.stringify(el));
     const { _id } = newEl;
-    const { favorites } = newEl.owner;
     const isFavorite = favorites.find(favId => favId === _id);
-
-    if (isFavorite) {
-      newEl.owner.favorites = true;
-    } else {
-      newEl.owner.favorites = false;
-    }
+    newEl.owner.favorites = !!isFavorite;
     return newEl;
   });
 

@@ -9,6 +9,7 @@ const quizzesRouter = require('./routes/api/quizzes');
 const questionsRouter = require('./routes/api/questions');
 const feedbackRouter = require('./routes/api/feedback');
 const usersRouter = require('./routes/api/users');
+const swaggerDocument = require('./swagger.json');
 
 const swaggerUi = require('swagger-ui-express');
 
@@ -27,9 +28,7 @@ app.use('/api/categories', categoriesRouter);
 app.use('/api/quizzes', quizzesRouter);
 app.use('/api/questions', questionsRouter);
 
-const swaggerDocument = require('./swager.json');
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-
 app.use((req, res) => {
   res.status(404).json({ message: 'Route not found' });
 });

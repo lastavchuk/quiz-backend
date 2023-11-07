@@ -16,7 +16,7 @@ router.get('/random', ctrl.getRandomQuizzes);
 // The total number of people who passed all quizzes
 router.get('/total', ctrl.getTotalAllQuizzes);
 
-//===== PRIVATE routes =====
+// ===== PRIVATE routes =====
 // get all and filter quizzes
 router.get('/', authenticate, ctrl.getSearchQuiz);
 
@@ -44,7 +44,7 @@ router.put(
 );
 
 // Increase the counter of passed quizzes by 1
-router.patch('/:quizId', authenticate, isValidQuizId, ctrl.patchOnePassed);
+router.patch('/:quizId', isValidQuizId, ctrl.patchOnePassed);
 
 // Delete quiz from quizId
 router.delete('/:quizId', authenticate, isValidQuizId, ctrl.deleteQuiz);
