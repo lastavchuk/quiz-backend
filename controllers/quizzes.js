@@ -233,9 +233,6 @@ const getSearchQuiz = async (req, res) => {
   // }
   const { _id } = req.user;
   const { favorites } = await User.findById(_id, 'favorites');
-  if (favorites.length === 0) {
-    return res.json([]);
-  }
 
   const result = await Quiz.find({ $and: arrOptions }, '', options)
     .populate('quizCategory')
