@@ -127,7 +127,7 @@ const deleteQuiz = async (req, res) => {
 
 // **************************************
 const getAllQuizCreateUser = async (req, res) => {
-  const { page = 1, limit = 6 } = req.query;
+  const { page = 1, limit = 8 } = req.query;
 
   const skip = (page - 1) * limit;
   const options = { skip, limit };
@@ -173,7 +173,7 @@ const getOneQuiz = async (req, res) => {
 };
 // *****************************************
 const getSearchQuiz = async (req, res) => {
-  const { page = 1, limit = 6, q, rate, category } = req.query;
+  const { page = 1, limit = 8, q, rate, category } = req.query;
 
   const skip = (page - 1) * limit;
   // *******************************************//
@@ -231,25 +231,22 @@ const getSearchQuiz = async (req, res) => {
   //     rate: { $gte: Number(rate) - 0.5, $lt: Number(rate) + 0.5 },
   //   });
   // }
+  const { _id } = req.user;
+  const { favorites } = await User.findById(_id, 'favorites');
+  if (favorites.length === 0) {
+    return res.json([]);
+  }
 
   const result = await Quiz.find({ $and: arrOptions }, '', options)
-    // const result = await Quiz.find(arrOptions, '', options)
     .populate('quizCategory')
     .populate('owner', 'favorites');
 
   // *************************// чи знаходиться в обраних
   const prepareData = result.map(el => {
     const newEl = JSON.parse(JSON.stringify(el));
-
     const { _id } = newEl;
-    const { favorites } = newEl.owner;
     const isFavorite = favorites.find(favId => favId === _id);
-
-    if (isFavorite) {
-      newEl.owner.favorites = true;
-    } else {
-      newEl.owner.favorites = false;
-    }
+    newEl.owner.favorites = !!isFavorite;
     return newEl;
   });
 
@@ -295,7 +292,7 @@ const getRandomQuizzes = async (req, res) => {
 
 /* to quizzes controllers */
 const getPassedQuizzes = async (req, res) => {
-  const { page = 1, limit = 6 } = req.query;
+  const { page = 1, limit = 8 } = req.query;
 
   const skip = (page - 1) * limit;
   const options = { skip, limit };

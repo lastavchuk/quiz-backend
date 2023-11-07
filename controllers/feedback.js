@@ -22,7 +22,7 @@ const addFeedbackQuizId = async (req, res) => {
 };
 
 const getAllFeedbacks = async (req, res) => {
-  const { page = 1, limit = 6 } = req.query;
+  const { page = 1, limit = 8 } = req.query;
   const skip = (page - 1) * limit;
   const options = { skip, limit };
 
