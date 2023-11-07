@@ -155,13 +155,7 @@
       "get": {
         "tags": ["Auth"],
         "summary": "Gets about user info",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "Authorization",
-            "required": true
-          }
-        ],
+        "parameters": [],
         "security": [{ "Bearer": [] }],
         "responses": {
           "200": {
@@ -193,13 +187,7 @@
       "patch": {
         "tags": ["Users"],
         "summary": "Updates user`s avatar",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "Authorization",
-            "required": true
-          }
-        ],
+        "parameters": [],
         "security": [{ "Bearer": [] }],
         "requestBody": {
           "description": "New user`s avatar file",
@@ -241,13 +229,7 @@
       "patch": {
         "tags": ["Users"],
         "summary": "Creates user`s quizzes",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "Authorization",
-            "required": true
-          }
-        ],
+        "parameters": [],
         "security": [{ "Bearer": [] }],
         "requestBody": {
           "description": "Completed quiz that was passed by the user",
@@ -293,13 +275,7 @@
       "patch": {
         "tags": ["Users"],
         "summary": "Retake quiz",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "Authorization",
-            "required": true
-          }
-        ],
+        "parameters": [],
         "security": [{ "Bearer": [] }],
         "requestBody": {
           "description": "Completed quiz that was passed by the user",
@@ -345,13 +321,7 @@
       "patch": {
         "tags": ["Users"],
         "summary": "Adding a quiz to favorites",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "Authorization",
-            "required": true
-          }
-        ],
+        "parameters": [],
         "security": [{ "Bearer": [] }],
         "requestBody": {
           "description": "User Favorites Object",
@@ -391,13 +361,7 @@
       "get": {
         "tags": ["Users"],
         "summary": "User Favorites Object",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "Authorization",
-            "required": true
-          }
-        ],
+        "parameters": [],
         "security": [{ "Bearer": [] }],
         "responses": {
           "200": {
