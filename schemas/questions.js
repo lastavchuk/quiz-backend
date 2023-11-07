@@ -4,11 +4,11 @@ const conctants = require('../constants/constants');
 
 const answerSchemaJoi = Joi.object({
   answer: Joi.string()
-    .min(3)
+    .min(2)
     .max(500)
     .required()
     .messages({
-      'string.min': errMsg.errFieldMinLength('Answer', 3),
+      'string.min': errMsg.errFieldMinLength('Answer', 2),
       'string.max': errMsg.errFieldMaxLength('Answer', 500),
       'string.empty': errMsg.errFieldIsrequired('Answer'),
       'any.required': errMsg.errFieldIsrequired('Answer'),
@@ -40,11 +40,11 @@ const addQuestionObj = {
   background: Joi.string().valid(...conctants.questionBg),
   question: Joi.string()
     .min(3)
-    .max(50)
+    .max(500)
     .required()
     .messages({
       'string.min': errMsg.errFieldMinLength('Question', 3),
-      'string.max': errMsg.errFieldMaxLength('Question', 50),
+      'string.max': errMsg.errFieldMaxLength('Question', 500),
       'string.empty': errMsg.errFieldIsrequired('Question'),
       'any.required': errMsg.errFieldIsrequired('Question'),
     }),

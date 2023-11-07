@@ -143,11 +143,12 @@ const getAllQuizCreateUser = async (req, res) => {
     const { favorites } = newEl.owner;
     const isFavorite = favorites.find(favId => favId === _id);
 
-    if (isFavorite) {
-      newEl.owner.favorites = true;
-    } else {
-      newEl.owner.favorites = false;
-    }
+    newEl.isFavorite = !!isFavorite;
+    // if (isFavorite) {
+    //   newEl.owner.favorites = true;
+    // } else {
+    //   newEl.owner.favorites = false;
+    // }
     return newEl;
   });
 

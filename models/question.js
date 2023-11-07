@@ -7,7 +7,7 @@ const answerSchemaMongoose = new Schema(
   {
     answer: {
       type: String,
-      minlength: [3, errMsg.errFieldMinLength('Answer', 3)],
+      minlength: [2, errMsg.errFieldMinLength('Answer', 2)],
       maxlength: [500, errMsg.errFieldMaxLength('Answer', 500)],
       required: [true, errMsg.errFieldIsrequired('Answer')],
     },
@@ -44,7 +44,7 @@ const questionSchemaMongoose = new Schema(
     question: {
       type: String,
       minlength: [3, errMsg.errFieldMinLength('Question', 3)],
-      maxlength: [50, errMsg.errFieldMaxLength('Question', 50)],
+      maxlength: [500, errMsg.errFieldMaxLength('Question', 500)],
       required: [true, errMsg.errFieldIsrequired('Question')],
     },
     answers: {
