@@ -133,16 +133,23 @@ const getAllQuizCreateUser = async (req, res) => {
   const options = { skip, limit };
   const { _id } = req.user;
   const par = { owner: _id };
-  const result = await Quiz.find(
-    par,
-    '_id quizName rate totalPassed',
-    options
-  ).populate('quizCategory', '-_id categoryName');
+  const { favorites } = await User.findById(_id, 'favorites');
+  const resultObj = await Promise.all([
+    Quiz.find(par, '_id quizName rate totalPassed', options).populate(
+      'quizCategory',
+      '-_id categoryName'
+    ),
+    Quiz.find(par).count(),
+  ]);
+  // const result = await Quiz.find(
+  //   par,
+  //   '_id quizName rate totalPassed',
+  //   options
+  // ).populate('quizCategory', '-_id categoryName');
   // .populate('owner', 'favorites');
 
-  const { favorites } = await User.findById(_id, 'favorites');
   // *************************// чи знаходиться в обраних
-  const prepareData = definedFavorites(result, favorites);
+  const prepareData = definedFavorites(resultObj[0], favorites);
   // const prepareData = result.map(el => {
   //   const newEl = JSON.parse(JSON.stringify(el));
   //   const { _id } = newEl;
@@ -158,7 +165,7 @@ const getAllQuizCreateUser = async (req, res) => {
   //   return newEl;
   // });
 
-  res.json(prepareData);
+  res.json({ data: prepareData, totalQuiz: resultObj[1] });
 };
 // *****************************
 const patchOnePassed = async (req, res) => {
@@ -244,13 +251,16 @@ const getSearchQuiz = async (req, res) => {
   const { _id } = req.user;
   const { favorites } = await User.findById(_id, 'favorites');
 
-  const result = await Quiz.find({ $and: arrOptions }, '', options).populate(
-    'quizCategory'
-  );
+  // const result = await Quiz.find({ $and: arrOptions }, '', options).populate(
+  //   'quizCategory'
+  // );
   // .populate('owner', 'favorites');
-
+  const resultObj = await Promise.all([
+    Quiz.find({ $and: arrOptions }, '', options).populate('quizCategory'),
+    Quiz.find({ $and: arrOptions }).count(),
+  ]);
   // *************************// чи знаходиться в обраних
-  const prepareData = definedFavorites(result, favorites);
+  const prepareData = definedFavorites(resultObj[0], favorites);
   // const prepareData = result.map(el => {
   //   const newEl = JSON.parse(JSON.stringify(el));
   //   // const { _id } = newEl;
@@ -263,7 +273,7 @@ const getSearchQuiz = async (req, res) => {
   //   return { ...newEl, isFavorite };
   // });
 
-  res.json(prepareData);
+  res.json({ data: prepareData, totalQuiz: resultObj[1] });
 };
 
 const getRandomQuizzes = async (req, res) => {
