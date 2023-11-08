@@ -1,11 +1,13 @@
 const Quiz = require('../models/quiz');
 const Question = require('../models/question');
-const Category = require('../models/category');
 const User = require('../models/user');
 const { ctrlWrapper, HttpError, definedFavorites } = require('../helpers');
 const errMsg = require('../constants/errors');
 
 const addQuiz = async (req, res) => {
+  const result = await Quiz.create(req.body);
+  res.status(201).json(result);
+  /*
   const { quizCategory, quizType, quizName, questions } = req.body;
 
   const quiz = {
@@ -35,9 +37,19 @@ const addQuiz = async (req, res) => {
   };
 
   res.status(201).json(newQuiz);
+  */
 };
 
 const updateQuiz = async (req, res) => {
+  const resQuiz = await Quiz.findByIdAndUpdate(req.params.quizId, req.body, {
+    new: true,
+  });
+  if (!resQuiz) {
+    throw HttpError(404, errMsg.errMsgQuizNotFound);
+  }
+  res.json(resQuiz);
+
+  /*
   const { quizCategory, quizType, quizName, rate, totalPassed, questions } =
     req.body;
 
@@ -74,33 +86,7 @@ const updateQuiz = async (req, res) => {
   } catch (error) {
     res.status(400).json({ message: 'Failed to update quiz questions!' });
   }
-
-  // // Цей метод не враховує випадок, коли зменшиться кількість запитань у вікторині
-  // // Якщо спочатку було 4, а після оновлення стане 2, то в базі не видаляться 2 зайві запитання
-  // const listOfPromises = questions.map((el) => {
-  //     const id = el._id;
-  //     delete el._id;
-  //     return Question.findByIdAndUpdate(id, el, { new: true });
-  // });
-
-  // try {
-  //     const resQuestions = await Promise.all(listOfPromises);
-  //     const newQuiz = {
-  //         _id: resQuiz._id,
-  //         owner: resQuiz.owner,
-  //         quizCategory: resQuiz.quizCategory,
-  //         quizType: resQuiz.quizType,
-  //         quizName: resQuiz.quizName,
-  //         rate: resQuiz.rate,
-  //         totalPassed: resQuiz.totalPassed,
-  //         questions: resQuestions,
-  //     };
-
-  //     res.json(newQuiz);
-  // } catch (err) {
-  //     console.log("err :>> ", err);
-  //     res.status(400).json({ message: "Failed to update quiz questions!" });
-  // }
+  */
 };
 
 const deleteQuiz = async (req, res) => {
@@ -112,7 +98,7 @@ const deleteQuiz = async (req, res) => {
   }
 
   await Promise.all([
-    Question.deleteMany({ quizId: quizId }), // delete quiz by id
+    Question.deleteMany({ quizId: quizId }), // delete all questions of this quiz
     User.updateMany(
       { 'passedQuizzes.quizId': quizId },
       { $pull: { passedQuizzes: { quizId: quizId } } }
@@ -167,6 +153,7 @@ const getAllQuizCreateUser = async (req, res) => {
 
   res.json({ data: prepareData, totalQuiz: resultObj[1] });
 };
+
 // *****************************
 const patchOnePassed = async (req, res) => {
   const result = await Quiz.findOneAndUpdate(
@@ -176,8 +163,8 @@ const patchOnePassed = async (req, res) => {
   );
   res.json(result);
 };
-// ****************************************
 
+// ****************************************
 const getOneQuiz = async (req, res) => {
   const result = await Question.find(
     { quizId: req.params.quizId },
@@ -185,28 +172,12 @@ const getOneQuiz = async (req, res) => {
   ).populate('quizId', 'quizName');
   res.json(result);
 };
+
 // *****************************************
 const getSearchQuiz = async (req, res) => {
   const { page = 1, limit = 8, q, rate, category } = req.query;
 
   const skip = (page - 1) * limit;
-  // *******************************************//
-  // let filter = {};
-  // if (q) {
-  //   filter.quizName = new RegExp(q, 'i');
-  // }
-  // if (type) {
-  //   filter.quizType = type;
-  // }
-  // if (rate) {
-  //   filter.rate = { $gte: rate }; // більше або рівно
-  //   // якщо потрібно менше або рівно, то { $$lte: rate }
-  // }
-  // if (category) {
-  //   filter.quizCategory = category;
-  // }
-  // const result = await Quiz.find(filter, '', { skip, limit });
-  // *******************************************//
   const options = { skip, limit };
   const qq = new RegExp(q, 'i');
 
