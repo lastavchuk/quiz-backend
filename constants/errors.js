@@ -34,6 +34,7 @@ function errFieldMax(field, max) {
 
 const errMsgEmailNotVerify = 'Your email address has not been verified';
 const errMsgUserNotFound = 'User not found';
+const errMsgCategoryNotFound = 'Category not found';
 const errMsgQuizNotFound = 'Quiz not found';
 const errMsgQuestionNotFound = 'Question not found';
 
@@ -60,6 +61,7 @@ module.exports = {
   errFieldIsrequired,
   errMsgEmailNotVerify,
   errMsgUserNotFound,
+  errMsgCategoryNotFound,
   errMsgQuizNotFound,
   errMsgQuestionNotFound,
   errMsgQuizNoQuestions,

@@ -41,7 +41,7 @@ router.put(
   authenticate,
   isValidQuizId,
   upload.single('image'),
-  validateBody(schemas.updateQuizSchemaJoi),
+  validateBody(schemas.addQuizSchemaJoi),
   ctrl.updateQuiz
 );
 
