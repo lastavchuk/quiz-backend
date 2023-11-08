@@ -36,7 +36,6 @@ const addQuestionObj = {
       'number.min': errMsg.errFieldMin('Time', 1),
       'any.required': errMsg.errFieldIsrequired('Time'),
     }),
-  image: Joi.string(),
   background: Joi.string().valid(...conctants.questionBg),
   question: Joi.string()
     .min(3)

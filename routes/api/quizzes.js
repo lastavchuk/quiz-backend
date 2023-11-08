@@ -24,6 +24,7 @@ router.get('/', authenticate, ctrl.getSearchQuiz);
 router.post(
   '/',
   authenticate,
+  upload.single('image'),
   validateBody(schemas.addQuizSchemaJoi),
   ctrl.addQuiz
 );
@@ -39,6 +40,7 @@ router.put(
   '/:quizId',
   authenticate,
   isValidQuizId,
+  upload.single('image'),
   validateBody(schemas.updateQuizSchemaJoi),
   ctrl.updateQuiz
 );
