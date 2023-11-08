@@ -8,6 +8,7 @@ const verifyEmailTmpl = require('./verifyEmailTmpl');
 const definedFavorites = require('./definedFavorites');
 const cloudinary = require('./cloudinary');
 const cloudinaryUpload = require('./cloudinaryUpload');
+const compareQuizType = require('./compareQuizType');
 
 module.exports = {
   ctrlWrapper,
@@ -20,4 +21,5 @@ module.exports = {
   cloudinary,
   cloudinaryUpload,
   definedFavorites,
+  compareQuizType,
 };

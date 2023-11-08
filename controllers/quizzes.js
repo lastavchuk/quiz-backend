@@ -1,46 +1,25 @@
 const Quiz = require('../models/quiz');
 const Question = require('../models/question');
 const User = require('../models/user');
-const { ctrlWrapper, HttpError, definedFavorites } = require('../helpers');
+const {
+  ctrlWrapper,
+  HttpError,
+  definedFavorites,
+  compareQuizType,
+} = require('../helpers');
 const errMsg = require('../constants/errors');
 
 const addQuiz = async (req, res) => {
+  await compareQuizType(req.body.quizCategory, req.body.quizType);
+
+  req.body.owner = req.user._id;
   const result = await Quiz.create(req.body);
   res.status(201).json(result);
-  /*
-  const { quizCategory, quizType, quizName, questions } = req.body;
-
-  const quiz = {
-    quizCategory,
-    quizType,
-    quizName,
-    rate: 0,
-    totalPassed: 0,
-    owner: req.user._id,
-  };
-
-  const resQuiz = await Quiz.create(quiz);
-
-  questions.forEach(el => (el.quizId = resQuiz._id));
-
-  const resQuestions = await Question.insertMany(questions);
-
-  const newQuiz = {
-    _id: resQuiz._id,
-    owner: resQuiz.owner,
-    quizCategory: resQuiz.quizCategory,
-    quizType: resQuiz.quizType,
-    quizName: resQuiz.quizName,
-    rate: resQuiz.rate,
-    totalPassed: resQuiz.totalPassed,
-    questions: resQuestions,
-  };
-
-  res.status(201).json(newQuiz);
-  */
 };
 
 const updateQuiz = async (req, res) => {
+  await compareQuizType(req.body.quizCategory, req.body.quizType);
+
   const resQuiz = await Quiz.findByIdAndUpdate(req.params.quizId, req.body, {
     new: true,
   });
@@ -48,45 +27,6 @@ const updateQuiz = async (req, res) => {
     throw HttpError(404, errMsg.errMsgQuizNotFound);
   }
   res.json(resQuiz);
-
-  /*
-  const { quizCategory, quizType, quizName, rate, totalPassed, questions } =
-    req.body;
-
-  const quiz = {
-    quizCategory,
-    quizType,
-    quizName,
-    rate,
-    totalPassed,
-  };
-
-  const resQuiz = await Quiz.findByIdAndUpdate(req.params.quizId, quiz, {
-    new: true,
-  });
-  if (!resQuiz) {
-    throw HttpError(404);
-  }
-
-  try {
-    await Question.deleteMany({ quizId: req.params.quizId });
-    const resAddQuestions = await Question.insertMany(questions);
-
-    const newQuiz = {
-      _id: resQuiz._id,
-      owner: resQuiz.owner,
-      quizCategory: resQuiz.quizCategory,
-      quizType: resQuiz.quizType,
-      quizName: resQuiz.quizName,
-      rate: resQuiz.rate,
-      totalPassed: resQuiz.totalPassed,
-      questions: resAddQuestions,
-    };
-    res.json(newQuiz);
-  } catch (error) {
-    res.status(400).json({ message: 'Failed to update quiz questions!' });
-  }
-  */
 };
 
 const deleteQuiz = async (req, res) => {
