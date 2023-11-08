@@ -1,6 +1,6 @@
 const Quiz = require('../models/quiz');
 const Question = require('../models/question');
-const { ctrlWrapper, HttpError } = require('../helpers');
+const { ctrlWrapper, HttpError, cloudinaryUpload } = require('../helpers');
 const errMsg = require('../constants/errors');
 
 const addQuestion = async (req, res) => {
@@ -9,10 +9,14 @@ const addQuestion = async (req, res) => {
     throw HttpError(404, errMsg.errMsgQuizNotFound);
   }
 
-  const resAdd = await Question.create({
-    ...req.body,
-    quizId: req.params.quizId,
-  });
+  req.body.quizId = req.params.quizId;
+
+  if (req.file) {
+    const url = await cloudinaryUpload(req.file.path, 'quize-image-question');
+    req.body.image = url;
+  }
+
+  const resAdd = await Question.create(req.body);
 
   res.status(201).json(resAdd);
 };
@@ -27,6 +31,10 @@ const getQuestion = async (req, res) => {
 };
 
 const updateQuestion = async (req, res) => {
+  if (req.file) {
+    const url = await cloudinaryUpload(req.file.path, 'quize-image-question');
+    req.body.image = url;
+  }
   const resQuestion = await Question.findByIdAndUpdate(
     req.params.questionId,
     req.body,

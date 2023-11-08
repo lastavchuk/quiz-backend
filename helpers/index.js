@@ -7,6 +7,7 @@ const sendEmailUkrNet = require('./sendEmailUkrNet');
 const verifyEmailTmpl = require('./verifyEmailTmpl');
 const definedFavorites = require('./definedFavorites');
 const cloudinary = require('./cloudinary');
+const cloudinaryUpload = require('./cloudinaryUpload');
 
 module.exports = {
   ctrlWrapper,
@@ -17,5 +18,6 @@ module.exports = {
   sendEmailUkrNet,
   sendEmailSendGrid,
   cloudinary,
+  cloudinaryUpload,
   definedFavorites,
 };

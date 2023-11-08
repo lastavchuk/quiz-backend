@@ -1,10 +1,9 @@
-const fs = require('fs/promises');
 const jimp = require('jimp');
 const { isValidObjectId } = require('mongoose');
 
 const User = require('../models/user');
 const Quiz = require('../models/quiz');
-const { ctrlWrapper, HttpError, cloudinary } = require('../helpers');
+const { ctrlWrapper, HttpError, cloudinaryUpload } = require('../helpers');
 
 const getAllFavorites = async (req, res, next) => {
   const { page = 1, limit = 8 } = req.query;
@@ -74,11 +73,10 @@ const updateUser = async (req, res) => {
       .catch(err => {
         throw HttpError(400, err.message);
       });
-    const { url } = await cloudinary.uploader.upload(req.file.path, {
-      folder: 'quize-user-avatars',
-    });
-    await fs.unlink(req.file.path);
+
+    const url = await cloudinaryUpload(req.file.path, 'quize-user-avatars');
     updateFields.userAvatar = url;
+
     if (req.body)
       for (const key in req.body) {
         updateFields[key] = req.body[key];

@@ -30,9 +30,11 @@ const getAllFeedbacks = async (req, res) => {
   const skip = (page - 1) * limit;
   const options = { skip, limit };
 
+  const searchObj = { comment: { $exists: 'true', $ne: '' } };
+
   const result = await Promise.all([
-    Feedback.find({}, '', options).sort('-createdAt'),
-    Feedback.find({}).count(),
+    Feedback.find(searchObj, '', options).sort('-createdAt'),
+    Feedback.find(searchObj).count(),
   ]);
 
   res.json({

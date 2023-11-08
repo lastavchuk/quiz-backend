@@ -7,6 +7,7 @@ const {
   validateBody,
   isValidQuizId,
   isValidQuestionId,
+  upload,
 } = require('../../middlewares');
 
 // Add new question to quiz with quizId
@@ -14,6 +15,7 @@ router.post(
   '/:quizId',
   authenticate,
   isValidQuizId,
+  upload.single('image'),
   validateBody(schemas.addQuestionSchemaJoi),
   ctrl.addQuestion
 );
@@ -26,6 +28,7 @@ router.put(
   '/:questionId',
   authenticate,
   isValidQuestionId,
+  upload.single('image'),
   validateBody(schemas.addQuestionSchemaJoi),
   ctrl.updateQuestion
 );
