@@ -14,7 +14,7 @@ const feedbackSchemaMongoose = new Schema(
     },
     userAvatar: {
       type: String,
-      default: 'https://gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50',
+      default: '',
     },
     rate: {
       type: Number,
