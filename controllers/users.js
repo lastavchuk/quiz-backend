@@ -4,6 +4,7 @@ const { isValidObjectId } = require('mongoose');
 const User = require('../models/user');
 const Quiz = require('../models/quiz');
 const { ctrlWrapper, HttpError, cloudinaryUpload } = require('../helpers');
+const err = require('../constants/errors');
 
 const getAllFavorites = async (req, res, next) => {
   const { page = 1, limit = 8 } = req.query;
@@ -12,9 +13,8 @@ const getAllFavorites = async (req, res, next) => {
   const options = { skip, limit };
 
   const user = await User.findById(req.user._id).select('favorites');
-  console.log('user: ', user);
   if (!user) {
-    throw HttpError(404);
+    throw HttpError(404, err.errMsgUserNotFound);
   }
 
   const resultObj = await Promise.all([
@@ -22,9 +22,14 @@ const getAllFavorites = async (req, res, next) => {
       { _id: { $in: user.favorites } },
       '-createdAt -updatedAt',
       options
-    ),
+    ).populate('quizCategory', '-_id categoryName'),
     Quiz.find({ _id: { $in: user.favorites } }).count(),
   ]);
+
+  resultObj[0].forEach(quiz => {
+    quiz._doc.categoryName = quiz.quizCategory.categoryName;
+    delete quiz._doc.quizCategory;
+  });
 
   res.json({ data: resultObj[0], totalFavorites: resultObj[1] });
 };
