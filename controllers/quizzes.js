@@ -61,7 +61,7 @@ const getAllQuizCreateUser = async (req, res) => {
   const par = { owner: _id };
   const { favorites } = await User.findById(_id, 'favorites');
   const resultObj = await Promise.all([
-    Quiz.find(par, '_id quizName rate totalPassed', options).populate(
+    Quiz.find(par, '_id quizName rate totalPassed quizType', options).populate(
       'quizCategory',
       '-_id categoryName'
     ),
