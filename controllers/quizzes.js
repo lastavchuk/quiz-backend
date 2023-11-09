@@ -106,11 +106,24 @@ const patchOnePassed = async (req, res) => {
 
 // ****************************************
 const getOneQuiz = async (req, res) => {
-  const result = await Question.find(
+  const resultQuiz = await Quiz.findById(req.params.quizId).populate(
+    'quizCategory',
+    '-_id categoryName'
+  );
+  if (!resultQuiz) {
+    throw HttpError(404, errMsg.errMsgQuizNotFound);
+  }
+
+  resultQuiz._doc.categoryName = resultQuiz.quizCategory.categoryName;
+  delete resultQuiz._doc.quizCategory;
+
+  const resultQuestions = await Question.find(
     { quizId: req.params.quizId },
-    'image question answers time'
-  ).populate('quizId', 'quizName');
-  res.json(result);
+    '-quizId'
+  );
+
+  resultQuiz._doc.questions = resultQuestions;
+  res.json(resultQuiz);
 };
 
 // *****************************************
