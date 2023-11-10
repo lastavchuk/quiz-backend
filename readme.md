@@ -2,8 +2,8 @@
 
 API documentation for project QuizMaster
 
-Open (https://quiz-backend-vq56.onrender.com/api/docs) or
-(http://localhost:3000/api/docs) in your browser to see API documentation.
+Open https://quiz-backend-vq56.onrender.com/api/docs or
+http://localhost:3000/api/docs in your browser to see API documentation.
 
 ### Команди:
 
