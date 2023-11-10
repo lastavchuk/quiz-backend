@@ -51,8 +51,7 @@ const deleteQuiz = async (req, res) => {
   res.json({ message: 'Quiz deleted!' });
 };
 
-// **************************************
-const getAllQuizCreateUser = async (req, res) => {
+const getAllQuizzesUser = async (req, res) => {
   const { page = 1, limit = 8 } = req.query;
 
   const skip = (page - 1) * limit;
@@ -60,6 +59,7 @@ const getAllQuizCreateUser = async (req, res) => {
   const { _id } = req.user;
   const par = { owner: _id };
   const { favorites } = await User.findById(_id, 'favorites');
+
   const resultObj = await Promise.all([
     Quiz.find(par, '_id quizName rate totalPassed quizType', options).populate(
       'quizCategory',
@@ -67,35 +67,13 @@ const getAllQuizCreateUser = async (req, res) => {
     ),
     Quiz.find(par).count(),
   ]);
-  // const result = await Quiz.find(
-  //   par,
-  //   '_id quizName rate totalPassed',
-  //   options
-  // ).populate('quizCategory', '-_id categoryName');
-  // .populate('owner', 'favorites');
 
-  // *************************// чи знаходиться в обраних
-  const prepareData = definedFavorites(resultObj[0], favorites);
-  // const prepareData = result.map(el => {
-  //   const newEl = JSON.parse(JSON.stringify(el));
-  //   const { _id } = newEl;
-  //   const { favorites } = newEl.owner;
-  //   const isFavorite = favorites.find(favId => favId === _id);
-
-  //   newEl.isFavorite = !!isFavorite;
-  //   // if (isFavorite) {
-  //   //   newEl.owner.favorites = true;
-  //   // } else {
-  //   //   newEl.owner.favorites = false;
-  //   // }
-  //   return newEl;
-  // });
+  const prepareData = definedFavorites(resultObj[0], favorites); // чи знаходиться в обраних
 
   res.json({ data: prepareData, totalQuiz: resultObj[1] });
 };
 
-// *****************************
-const patchOnePassed = async (req, res) => {
+const incTotalUserPassedQuiz = async (req, res) => {
   const result = await Quiz.findOneAndUpdate(
     { _id: req.params.quizId },
     { $inc: { totalPassed: 1 } },
@@ -104,8 +82,7 @@ const patchOnePassed = async (req, res) => {
   res.json(result);
 };
 
-// ****************************************
-const getOneQuiz = async (req, res) => {
+const getQuiz = async (req, res) => {
   const resultQuiz = await Quiz.findById(req.params.quizId).populate(
     'quizCategory',
     '-_id categoryName'
@@ -126,21 +103,15 @@ const getOneQuiz = async (req, res) => {
   res.json(resultQuiz);
 };
 
-// *****************************************
 const getSearchQuiz = async (req, res) => {
   const { page = 1, limit = 8, q, rate, category } = req.query;
 
   const skip = (page - 1) * limit;
   const options = { skip, limit };
-  const qq = new RegExp(q, 'i');
-
-  // const catId = await Category.find({ categoryName: category }); // видалити 2 строки якщо пошук по id
-  // const oneCategory = catId.map(itm => itm._id); // ------
-  // *** */
 
   const arrOptions = [];
 
-  qq && arrOptions.push({ quizName: qq });
+  q && arrOptions.push({ quizName: new RegExp(q, 'i') });
   category && arrOptions.push({ quizCategory: category.split(' ') });
   rate &&
     arrOptions.push({
@@ -149,53 +120,15 @@ const getSearchQuiz = async (req, res) => {
         $lt: Number(rate) + 0.5,
       },
     });
-  // ******
-  // const arrOptions = {};
-  // if (qq) {
-  //   arrOptions.quizName = qq;
-  // }
-  // if (category) {
-  //   arrOptions.quizCategory = category.split(' ');
-  // }
-  // if (rate) {
-  //   arrOptions.rate = { $gte: Number(rate) - 0.5, $lt: Number(rate) + 0.5 };
-  // }
-  // console.log(arrOptions);
-  // const arrOptions = [
 
-  //   { quizType: type },
-  //   { quizCategory: oneCategory },
-  // ]; // замінити при пошуку по id на category
+  const { favorites } = await User.findById(req.user._id, 'favorites');
 
-  // if (rate) {
-  //   arrOptions.push({
-  //     rate: { $gte: Number(rate) - 0.5, $lt: Number(rate) + 0.5 },
-  //   });
-  // }
-  const { _id } = req.user;
-  const { favorites } = await User.findById(_id, 'favorites');
-
-  // const result = await Quiz.find({ $and: arrOptions }, '', options).populate(
-  //   'quizCategory'
-  // );
-  // .populate('owner', 'favorites');
   const resultObj = await Promise.all([
     Quiz.find({ $and: arrOptions }, '', options).populate('quizCategory'),
     Quiz.find({ $and: arrOptions }).count(),
   ]);
-  // *************************// чи знаходиться в обраних
-  const prepareData = definedFavorites(resultObj[0], favorites);
-  // const prepareData = result.map(el => {
-  //   const newEl = JSON.parse(JSON.stringify(el));
-  //   // const { _id } = newEl;
-  //   // const isFavorite = favorites.find(favId => favId === newEl._id);
-  //   const isFavorite = favorites.includes(newEl._id);
 
-  //   // newEl.owner.favorites = isFavorite;
-
-  //   // console.log('newEl: ', { ...newEl, isFavorite });
-  //   return { ...newEl, isFavorite };
-  // });
+  const prepareData = definedFavorites(resultObj[0], favorites); // чи знаходиться в обраних
 
   res.json({ data: prepareData, totalQuiz: resultObj[1] });
 };
@@ -237,20 +170,17 @@ const getRandomQuizzes = async (req, res) => {
   res.json(result);
 };
 
-/* to quizzes controllers */
 const getPassedQuizzes = async (req, res) => {
   const { page = 1, limit = 8 } = req.query;
 
   const skip = (page - 1) * limit;
   const options = { skip, limit };
-  const { _id } = req.user;
 
-  const { passedQuizzes } = await User.findOne(_id);
+  const { passedQuizzes } = await User.findOne(req.user._id);
 
   const resArray = passedQuizzes.map(item => item.quizId);
   const idArray = resArray.toString().split(',');
 
-  // TODO
   if (passedQuizzes.length === 0) {
     return res.json([]);
   }
@@ -261,10 +191,6 @@ const getPassedQuizzes = async (req, res) => {
       .sort('-createdAt'),
     Quiz.find({ _id: { $in: idArray } }).count(),
   ]);
-
-  // const result = await Quiz.find({ _id: { $in: idArray } }, '', options)
-  //   .populate('quizCategory', '-_id categoryName')
-  //   .sort('-createdAt');
 
   const rewers = resultObj[0].map(item => {
     const matchingObj = passedQuizzes.find(
@@ -283,25 +209,20 @@ const getPassedQuizzes = async (req, res) => {
 
 const getTotalAllQuizzes = async (req, res) => {
   const result = await Quiz.aggregate([
-    {
-      $group: {
-        _id: null,
-        total: { $sum: '$totalPassed' },
-      },
-    },
+    { $group: { _id: null, total: { $sum: '$totalPassed' } } },
   ]);
   res.json(result[0].total);
 };
 
 module.exports = {
   addQuiz: ctrlWrapper(addQuiz),
-  getAllQuizCreateUser: ctrlWrapper(getAllQuizCreateUser),
-  patchOnePassed: ctrlWrapper(patchOnePassed),
-  getOneQuiz: ctrlWrapper(getOneQuiz),
-  getSearchQuiz: ctrlWrapper(getSearchQuiz),
+  getQuiz: ctrlWrapper(getQuiz),
   updateQuiz: ctrlWrapper(updateQuiz),
-  getRandomQuizzes: ctrlWrapper(getRandomQuizzes),
   deleteQuiz: ctrlWrapper(deleteQuiz),
-  getPassedQuizzes: ctrlWrapper(getPassedQuizzes) /* to  */,
+  getAllQuizzesUser: ctrlWrapper(getAllQuizzesUser),
+  incTotalUserPassedQuiz: ctrlWrapper(incTotalUserPassedQuiz),
+  getSearchQuiz: ctrlWrapper(getSearchQuiz),
+  getRandomQuizzes: ctrlWrapper(getRandomQuizzes),
+  getPassedQuizzes: ctrlWrapper(getPassedQuizzes),
   getTotalAllQuizzes: ctrlWrapper(getTotalAllQuizzes),
 };

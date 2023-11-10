@@ -30,7 +30,7 @@ router.post(
 );
 
 // Get all quizzes created by the user
-router.get('/myquiz', authenticate, ctrl.getAllQuizCreateUser);
+router.get('/myquiz', authenticate, ctrl.getAllQuizzesUser);
 
 // Get last tests that the user has passed
 router.get('/passedquiz', authenticate, ctrl.getPassedQuizzes);
@@ -45,14 +45,14 @@ router.put(
   ctrl.updateQuiz
 );
 
-// Increase the counter of passed quizzes by 1
-router.patch('/:quizId', isValidQuizId, ctrl.patchOnePassed);
+// Increase the number of people who passed the quiz by 1
+router.patch('/:quizId', isValidQuizId, ctrl.incTotalUserPassedQuiz);
 
 // Delete quiz from quizId
 router.delete('/:quizId', authenticate, isValidQuizId, ctrl.deleteQuiz);
 
 // ===== PUBLIC route =====
 // Get quiz with quizId
-router.get('/:quizId', isValidQuizId, ctrl.getOneQuiz);
+router.get('/:quizId', isValidQuizId, ctrl.getQuiz);
 
 module.exports = router;

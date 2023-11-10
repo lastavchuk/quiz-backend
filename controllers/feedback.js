@@ -1,4 +1,4 @@
-const { ctrlWrapper } = require('../helpers');
+const ctrlWrapper = require('../helpers/ctrlWrapper');
 const Feedback = require('../models/feedback');
 const Quiz = require('../models/quiz');
 
