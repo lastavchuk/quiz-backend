@@ -1,7 +1,6 @@
 const Joi = require('joi');
 const errMsg = require('../constants/errors');
 const conctants = require('../constants/constants');
-// const schemasQuestion = require('./questions');
 
 const addQuizObj = {
   quizCategory: Joi.string()
@@ -27,43 +26,12 @@ const addQuizObj = {
       'string.empty': errMsg.errFieldIsrequired('Quiz name'),
       'any.required': errMsg.errFieldIsrequired('Quiz name'),
     }),
-  // questions: Joi.array()
-  //   .items(schemasQuestion.addQuestionSchemaJoi)
-  //   .min(1)
-  //   .required()
-  //   .messages({
-  //     'array.min': errMsg.errMsgQuizMinQuestions,
-  //     'any.required': errMsg.errFieldIsrequired('Quiz questions'),
-  //   }),
 };
-
-// const updateQuizObj = {
-//   ...addQuizObj,
-//   rate: Joi.number()
-//     .min(0)
-//     .max(5)
-//     .required()
-//     .messages({
-//       'number.min': errMsg.errFieldMin('Rate', 0),
-//       'number.max': errMsg.errFieldMax('Rate', 5),
-//       'any.required': errMsg.errFieldIsrequired('Rate'),
-//     }),
-//   totalPassed: Joi.number()
-//     .min(0)
-//     .required()
-//     .messages({
-//       'number.min': errMsg.errFieldMin('Total passed', 0),
-//       'any.required': errMsg.errFieldIsrequired('Total passed'),
-//     }),
-// };
 
 const addQuizSchemaJoi = Joi.object(addQuizObj);
 
-// const updateQuizSchemaJoi = Joi.object(updateQuizObj);
-
 const schemas = {
   addQuizSchemaJoi,
-  // updateQuizSchemaJoi,
 };
 
 module.exports = schemas;

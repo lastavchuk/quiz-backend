@@ -1,6 +1,5 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-
 const randomId = require('crypto').randomUUID;
 
 const User = require('../models/user');
@@ -18,7 +17,6 @@ const register = async (req, res) => {
   const result = await User.create({
     ...req.body,
     password: hashPass,
-    // userAvatar,
     verificationToken,
   });
 
@@ -46,14 +44,11 @@ const login = async (req, res) => {
     throw HttpError(401, errMsg.errMsgAuthInvalid);
   }
 
-  const payload = { id: user._id };
-  const token = jwt.sign(payload, SECRET_KEY, { expiresIn: '2d' });
+  const token = jwt.sign({ id: user._id }, SECRET_KEY, { expiresIn: '23h' });
 
   const result = await User.findByIdAndUpdate(
     user._id,
-    {
-      token,
-    },
+    { token },
     {
       new: true,
       select:
@@ -71,7 +66,6 @@ const current = async (req, res) => {
 
 const logout = async (req, res) => {
   await User.findByIdAndUpdate(req.user._id, { token: '' });
-
   res.status(204).json();
 };
 
