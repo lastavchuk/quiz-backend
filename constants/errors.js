@@ -1,42 +1,72 @@
 // Errors request
-const errBadReq = "Bad Request";
-const errNotAuth = "Not authorized";
-const errForbbiden = "Forbbiden";
-const errNotFound = "Not found";
-const errConflict = "Conflict";
+const errBadReq = 'Bad Request';
+const errNotAuth = 'Not authorized';
+const errForbbiden = 'Forbbiden';
+const errNotFound = 'Not found';
+const errConflict = 'Conflict';
 
 // Errors validations
-const errMsgMin = "The name must have a minimum of 3 characters";
-const errMsgMax = "The name must have a maximum of 50 characters";
+const errMsgEmailRegexp = 'is not a valid email!';
 
-const errMsgEmailRegexp = "is not a valid email!";
-const errMsgPhoneRegexp =
-    "is not a valid phone format! Example: (000) 000 0000";
+const errMsgMinPass = 'Password must have a minimum of 6 characters';
 
-const errMsgMinPass = "Password must have a minimum of 6 characters";
-
-const errMsgAuthInvalid = "Email or password invalid!";
+const errMsgAuthInvalid = 'Email or password invalid!';
 
 function errFieldIsrequired(field) {
-    return `${field} is required!`;
+  return `${field} is required!`;
 }
 
-const errMsgEmailNotVerify = "Your email address has not been verified";
-const errMsgUserNotFound = "User not found";
+function errFieldMinLength(field, min) {
+  return `${field} must have a minimum of ${min} characters!`;
+}
+
+function errFieldMaxLength(field, max) {
+  return `${field} must have a maximum of ${max} characters!`;
+}
+
+function errFieldMin(field, min) {
+  return `${field} must be at least ${min}!`;
+}
+
+function errFieldMax(field, max) {
+  return `${field} should be no more than ${max}!`;
+}
+
+const errMsgEmailNotVerify = 'Your email address has not been verified';
+const errMsgUserNotFound = 'User not found';
+const errMsgCategoryNotFound = 'Category not found';
+const errMsgQuizNotFound = 'Quiz not found';
+const errMsgQuestionNotFound = 'Question not found';
+
+// Quiz
+const errMsgQuizNoQuestions = 'Quiz no questions';
+const errMsgQuizMinQuestions = 'There must be at least 1 question in the quiz';
+const errMsgQuizMinAnswers = 'The question must have at least 2 answers';
+const errMsgQuizMaxAnswers = 'The question should have no more than 4 answers';
+const errMsgQuizLengthAnswers = 'There should be only 2 answer options';
 
 module.exports = {
-    errBadReq,
-    errNotAuth,
-    errForbbiden,
-    errNotFound,
-    errConflict,
-    errMsgMin,
-    errMsgMax,
-    errMsgEmailRegexp,
-    errMsgPhoneRegexp,
-    errMsgMinPass,
-    errMsgAuthInvalid,
-    errFieldIsrequired,
-    errMsgEmailNotVerify,
-    errMsgUserNotFound,
+  errBadReq,
+  errNotAuth,
+  errForbbiden,
+  errNotFound,
+  errConflict,
+  errFieldMin,
+  errFieldMax,
+  errFieldMinLength,
+  errFieldMaxLength,
+  errMsgEmailRegexp,
+  errMsgMinPass,
+  errMsgAuthInvalid,
+  errFieldIsrequired,
+  errMsgEmailNotVerify,
+  errMsgUserNotFound,
+  errMsgCategoryNotFound,
+  errMsgQuizNotFound,
+  errMsgQuestionNotFound,
+  errMsgQuizNoQuestions,
+  errMsgQuizMinQuestions,
+  errMsgQuizMinAnswers,
+  errMsgQuizMaxAnswers,
+  errMsgQuizLengthAnswers,
 };
